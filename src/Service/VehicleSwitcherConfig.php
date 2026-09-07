@@ -11,6 +11,10 @@ class VehicleSwitcherConfig
 {
     private const PREFIX = 'FahrzeugSchnellauswahl.config.';
 
+    public const SORT_POSITION = 'position';
+    public const SORT_NAME_ASC = 'nameAsc';
+    public const SORT_NAME_DESC = 'nameDesc';
+
     public function __construct(private readonly SystemConfigService $systemConfigService)
     {
     }
@@ -21,6 +25,8 @@ class VehicleSwitcherConfig
     }
 
     /**
+     * Reihenfolge: erst Gruppe A, dann Gruppe B.
+     *
      * @return list<string>
      */
     public function getPropertyGroupIds(?string $salesChannelId): array
@@ -45,8 +51,66 @@ class VehicleSwitcherConfig
         return $value > 0 ? $value : 60;
     }
 
-    public function showGroupLabel(?string $salesChannelId): bool
+    public function getSortMode(?string $salesChannelId): string
     {
-        return (bool) $this->systemConfigService->get(self::PREFIX . 'showGroupLabel', $salesChannelId);
+        $value = $this->systemConfigService->get(self::PREFIX . 'sortMode', $salesChannelId);
+
+        return \in_array($value, [self::SORT_POSITION, self::SORT_NAME_ASC, self::SORT_NAME_DESC], true)
+            ? $value
+            : self::SORT_POSITION;
+    }
+
+    public function showAllOption(?string $salesChannelId): bool
+    {
+        $value = $this->systemConfigService->get(self::PREFIX . 'showAllOption', $salesChannelId);
+
+        // Default: anzeigen (auch wenn der Wert noch nie gesetzt wurde).
+        return $value === null ? true : (bool) $value;
+    }
+
+    /**
+     * Eigene Beschriftung der „Alle"-Kachel. Null = Standardtext (Snippet).
+     */
+    public function getAllOptionLabel(?string $salesChannelId): ?string
+    {
+        return $this->trimToNull($this->systemConfigService->get(self::PREFIX . 'allOptionLabel', $salesChannelId));
+    }
+
+    /**
+     * Optionale Überschrift je konfigurierter Gruppe.
+     * Leerer Wert = keine Überschrift.
+     *
+     * @return array<string, string> groupId => Überschrift
+     */
+    public function getGroupLabels(?string $salesChannelId): array
+    {
+        $labels = [];
+
+        $map = [
+            'propertyGroupIdA' => 'groupLabelA',
+            'propertyGroupIdB' => 'groupLabelB',
+        ];
+
+        foreach ($map as $groupKey => $labelKey) {
+            $groupId = $this->systemConfigService->get(self::PREFIX . $groupKey, $salesChannelId);
+            $label = $this->trimToNull($this->systemConfigService->get(self::PREFIX . $labelKey, $salesChannelId));
+
+            if (\is_string($groupId) && $groupId !== '' && $label !== null) {
+                $labels[$groupId] = $label;
+            }
+        }
+
+        return $labels;
+    }
+
+    private function trimToNull(mixed $value): ?string
+    {
+        if (!\is_string($value)) {
+            return null;
+        }
+
+        $value = trim($value);
+
+        return $value === '' ? null : $value;
     }
 }

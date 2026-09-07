@@ -46,6 +46,7 @@ class HeaderPageletSubscriber implements EventSubscriberInterface
         $options = $this->optionLoader->load(
             $groupIds,
             $this->config->getMaxOptions($salesChannelId),
+            $this->config->getSortMode($salesChannelId),
             $event->getContext()
         );
 
@@ -66,7 +67,9 @@ class HeaderPageletSubscriber implements EventSubscriberInterface
             new VehicleSwitcherStruct(
                 $options,
                 $activeId,
-                $this->config->showGroupLabel($salesChannelId)
+                $this->config->showAllOption($salesChannelId),
+                $this->config->getAllOptionLabel($salesChannelId),
+                $this->config->getGroupLabels($salesChannelId)
             )
         );
     }

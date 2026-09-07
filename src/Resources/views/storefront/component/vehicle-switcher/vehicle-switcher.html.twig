@@ -11,23 +11,30 @@
             <div class="vehicle-switcher__track" role="group" aria-label="{{ 'vehicle-switcher.ariaLabel'|trans|sw_sanitize }}">
 
                 {% block component_vehicle_switcher_all %}
-                    <button type="button"
-                            class="vehicle-switcher__item vehicle-switcher__item--all{% if activeOptionId is null %} is-active{% endif %}"
-                            data-vehicle-switcher-item
-                            data-option-id=""
-                            aria-pressed="{{ activeOptionId is null ? 'true' : 'false' }}">
-                        {{ 'vehicle-switcher.showAll'|trans|sw_sanitize }}
-                    </button>
+                    {% if showAllOption %}
+                        <button type="button"
+                                class="vehicle-switcher__item vehicle-switcher__item--all{% if activeOptionId is null %} is-active{% endif %}"
+                                data-vehicle-switcher-item
+                                data-option-id=""
+                                aria-pressed="{{ activeOptionId is null ? 'true' : 'false' }}">
+                            {%- if allOptionLabel is not empty -%}
+                                {{ allOptionLabel|sw_sanitize }}
+                            {%- else -%}
+                                {{ 'vehicle-switcher.showAll'|trans|sw_sanitize }}
+                            {%- endif -%}
+                        </button>
+                    {% endif %}
                 {% endblock %}
 
                 {% block component_vehicle_switcher_items %}
                     {% set currentGroupId = null %}
                     {% for option in options %}
-                        {% if showGroupLabel and option.groupId != currentGroupId %}
+                        {% if option.groupId != currentGroupId %}
                             {% set currentGroupId = option.groupId %}
-                            <span class="vehicle-switcher__group-label">
-                                {{ (option.group.translated.name ?? option.group.name)|sw_sanitize }}
-                            </span>
+                            {% set groupLabel = groupLabels[option.groupId]|default('') %}
+                            {% if groupLabel is not empty %}
+                                <span class="vehicle-switcher__group-label">{{ groupLabel|sw_sanitize }}</span>
+                            {% endif %}
                         {% endif %}
 
                         <button type="button"

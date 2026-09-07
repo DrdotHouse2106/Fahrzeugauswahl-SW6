@@ -30,7 +30,28 @@
     </card>
 
     <card>
-        <title>Darstellung</title>
+        <title>Darstellung &amp; Beschriftung</title>
+
+        <input-field type="single-select">
+            <name>sortMode</name>
+            <label>Sortierung der Fahrzeuge</label>
+            <options>
+                <option>
+                    <id>position</id>
+                    <name>Wie in der Eigenschaftsgruppe (manuelle Reihenfolge)</name>
+                </option>
+                <option>
+                    <id>nameAsc</id>
+                    <name>Alphabetisch (A–Z)</name>
+                </option>
+                <option>
+                    <id>nameDesc</id>
+                    <name>Alphabetisch (Z–A)</name>
+                </option>
+            </options>
+            <defaultValue>position</defaultValue>
+            <helpText>„Manuelle Reihenfolge“ nutzt die Sortierung, die du in der Eigenschaftsgruppe per Drag &amp; Drop festlegst.</helpText>
+        </input-field>
 
         <input-field type="int">
             <name>maxOptions</name>
@@ -39,9 +60,29 @@
         </input-field>
 
         <input-field type="bool">
-            <name>showGroupLabel</name>
-            <label>Gruppennamen als Zwischenüberschrift zeigen</label>
-            <defaultValue>false</defaultValue>
+            <name>showAllOption</name>
+            <label>„Alle“-Kachel anzeigen</label>
+            <helpText>Kachel, mit der der Kunde den Fahrzeugfilter wieder aufhebt (alle Produkte anzeigen).</helpText>
+            <defaultValue>true</defaultValue>
+        </input-field>
+
+        <input-field type="text">
+            <name>allOptionLabel</name>
+            <label>Beschriftung der „Alle“-Kachel</label>
+            <placeholder>Alle Fahrzeuge</placeholder>
+            <helpText>Leer lassen für den Standardtext. Eigenen Text eintragen, z. B. „Alle“ oder „Zurücksetzen“.</helpText>
+        </input-field>
+
+        <input-field type="text">
+            <name>groupLabelA</name>
+            <label>Überschrift vor Gruppe A</label>
+            <helpText>Kleiner Text links vor den Kacheln der ersten Eigenschaftsgruppe. Leer lassen = keine Überschrift.</helpText>
+        </input-field>
+
+        <input-field type="text">
+            <name>groupLabelB</name>
+            <label>Überschrift vor Gruppe B</label>
+            <helpText>Nur relevant, wenn eine zweite Eigenschaftsgruppe konfiguriert ist. Leer lassen = keine Überschrift.</helpText>
         </input-field>
     </card>
 </config>

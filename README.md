@@ -72,6 +72,20 @@ Einstellungen → System → Plugins → *Fahrzeug-Schnellauswahl* → *Konfigur
 3. Eigenschaftsgruppe „Geeignet für" und optional „Geeignet für A-Typ" wählen.
 4. Speichern. Für weitere Shops Schritt 1–3 wiederholen; nicht konfigurierte Kanäle bleiben unberührt.
 
+Alle folgenden Einstellungen sind **pro Verkaufskanal** möglich.
+
+### Darstellung & Beschriftung
+
+| Einstellung | Wirkung |
+|---|---|
+| **Sortierung der Fahrzeuge** | `Manuelle Reihenfolge` (Standard) = exakt die Reihenfolge, die du in der Eigenschaftsgruppe per Drag & Drop festlegst. Alternativ `A–Z` / `Z–A`. Mehrere Gruppen bleiben immer als Block zusammen (Reihenfolge = Gruppen-Position). |
+| **Maximale Anzahl Kacheln** | Obergrenze, falls eine Gruppe sehr viele Optionen hat. |
+| **„Alle"-Kachel anzeigen** | Kachel zum Aufheben des Filters. Aus = keine Reset-Kachel (Filter lässt sich weiter durch Klick auf die aktive Kachel aufheben). |
+| **Beschriftung der „Alle"-Kachel** | Freier Text, z. B. `Alle` oder `Zurücksetzen`. Leer = Standardtext. |
+| **Überschrift vor Gruppe A / B** | Kleiner Text links vor den Kacheln der jeweiligen Gruppe. **Leer = keine Überschrift** (Standard – es stehen dann nur die Fahrzeugtypen da). |
+
+Die sichtbaren Kacheltexte selbst sind die **Namen der Eigenschafts-Optionen** – die änderst du direkt in Shopware unter *Kataloge → Eigenschaften* (bzw. mehrsprachig je Übersetzung).
+
 ## Eigenschaften befüllen
 
 Das Plugin liest nur `property_group` / `property_group_option` und die Zuordnung

@@ -11,10 +11,15 @@ use Shopware\Core\Framework\Struct\Struct;
  */
 class VehicleSwitcherStruct extends Struct
 {
+    /**
+     * @param array<string, string> $groupLabels groupId => Überschrift
+     */
     public function __construct(
         protected PropertyGroupOptionCollection $options,
         protected ?string $activeOptionId,
-        protected bool $showGroupLabel = false
+        protected bool $showAllOption = true,
+        protected ?string $allOptionLabel = null,
+        protected array $groupLabels = []
     ) {
     }
 
@@ -28,9 +33,22 @@ class VehicleSwitcherStruct extends Struct
         return $this->activeOptionId;
     }
 
-    public function isShowGroupLabel(): bool
+    public function isShowAllOption(): bool
     {
-        return $this->showGroupLabel;
+        return $this->showAllOption;
+    }
+
+    public function getAllOptionLabel(): ?string
+    {
+        return $this->allOptionLabel;
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public function getGroupLabels(): array
+    {
+        return $this->groupLabels;
     }
 
     public function getApiAlias(): string

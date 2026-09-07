@@ -3,6 +3,7 @@
 {#
     Fügt die horizontale Fahrzeug-Schnellauswahl direkt unter dem Header ein.
     Die Extension wird im HeaderPageletSubscriber gesetzt.
+    Achtung: Die Pagelet-Variable heißt hier `header`, nicht `page.header`.
 #}
 {% block layout_header %}
     {{ parent() }}
@@ -13,7 +14,9 @@
         {% sw_include '@Storefront/storefront/component/vehicle-switcher/vehicle-switcher.html.twig' with {
             options: vehicleSwitcher.options,
             activeOptionId: vehicleSwitcher.activeOptionId,
-            showGroupLabel: vehicleSwitcher.showGroupLabel
+            showAllOption: vehicleSwitcher.showAllOption,
+            allOptionLabel: vehicleSwitcher.allOptionLabel,
+            groupLabels: vehicleSwitcher.groupLabels
         } %}
     {% endif %}
 {% endblock %}

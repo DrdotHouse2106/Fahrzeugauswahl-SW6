@@ -72,6 +72,20 @@ Settings → System → Plugins → *Fahrzeug-Schnellauswahl* → *Config*
 3. Choose the "Suitable for" property group and optionally "Suitable for A-type".
 4. Save. Repeat steps 1–3 for further shops; sales channels left unconfigured stay untouched.
 
+All settings below are configurable **per sales channel**.
+
+### Appearance & labelling
+
+| Setting | Effect |
+|---|---|
+| **Vehicle sorting** | `Manual order` (default) = exactly the order you set in the property group via drag & drop. Or `A–Z` / `Z–A`. Multiple groups always stay as one block (order = group position). |
+| **Maximum number of pills** | Upper limit for groups with many options. |
+| **Show "all" pill** | The reset pill. Off = no reset pill (the filter can still be cleared by clicking the active pill). |
+| **"All" pill label** | Free text, e.g. `All` or `Reset`. Empty = default text. |
+| **Heading before group A / B** | Small text left of that group's pills. **Empty = no heading** (default – just the vehicle types). |
+
+The pill captions themselves are the **names of the property options** – edit them directly in Shopware under *Catalogues → Properties* (per translation for multiple languages).
+
 ## Filling the properties
 
 The plugin only reads `property_group` / `property_group_option` and the

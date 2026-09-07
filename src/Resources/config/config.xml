@@ -6,11 +6,6 @@
         <title>Fahrzeug-Schnellauswahl</title>
         <title lang="en-GB">Vehicle quick switcher</title>
 
-        <component name="sw-help-text">
-            <text>Die Konfiguration ist pro Verkaufskanal möglich. Wähle oben in der Plugin-Konfiguration den gewünschten Verkaufskanal aus und aktiviere die Schnellauswahl nur dort, wo sie erscheinen soll.</text>
-            <text lang="en-GB">This configuration is sales-channel aware. Pick a sales channel at the top of the plugin config and enable the switcher only where it should appear.</text>
-        </component>
-
         <input-field type="bool">
             <name>active</name>
             <label>In diesem Verkaufskanal aktivieren</label>

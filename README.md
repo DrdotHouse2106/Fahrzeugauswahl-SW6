@@ -10,7 +10,7 @@ angezeigt. Single-Select per Klick, global über alle Kategorien.
 
 | Schritt | Was passiert |
 |--------|--------------|
-| Datenbasis | Ganz normale Shopware-**Eigenschaften** (Properties). Zwei Eigenschaftsgruppen werden im Admin ausgewählt (z. B. „Geeignet für" / „Geeignet für A-Typ"). Wie diese Gruppen befüllt werden – manuell, per Import oder aus einem ERP – ist dem Plugin egal. |
+| Datenbasis | Ganz normale Shopware-**Eigenschaften** (Properties). Im Admin werden eine oder zwei „Filtergruppen" (= je eine Eigenschaftsgruppe) ausgewählt. Wie diese befüllt werden – manuell, per Import oder aus einem ERP – ist dem Plugin egal. |
 | Anzeige | `HeaderPageletSubscriber` hängt die Optionen der Gruppen als Extension `vehicleSwitcher` an das Header-Pagelet. Twig rendert die Pill-Leiste unter dem Header. |
 | Auswahl | JS-Plugin `VehicleSwitcher`: Klick → genau ein Fahrzeug aktiv (kein Stacking). Klick auf das aktive Fahrzeug oder auf „Alle Fahrzeuge" → Auswahl aufgehoben. Wert landet in `localStorage` **und** per POST in der SalesChannel-Session. |
 | Globaler Filter | `ProductListingSubscriber` hört auf `ProductListingCriteriaEvent` / `ProductSearchCriteriaEvent` / `ProductSuggestCriteriaEvent` und fügt bei aktivem Fahrzeug `EqualsFilter('product.properties.id', <optionId>)` zum `Criteria` hinzu – für **jede** Kategorie / Suche. |
@@ -69,20 +69,27 @@ Einstellungen → System → Plugins → *Fahrzeug-Schnellauswahl* → *Konfigur
 
 1. **Oben den Verkaufskanal auswählen** (nicht „Alle Verkaufskanäle").
 2. „In diesem Verkaufskanal aktivieren" einschalten.
-3. Eigenschaftsgruppe „Geeignet für" und optional „Geeignet für A-Typ" wählen.
+3. Karte **Filtergruppen**: „Filtergruppe 1 – Eigenschaft" wählen, optional „Filtergruppe 2".
 4. Speichern. Für weitere Shops Schritt 1–3 wiederholen; nicht konfigurierte Kanäle bleiben unberührt.
 
 Alle folgenden Einstellungen sind **pro Verkaufskanal** möglich.
 
-### Darstellung & Beschriftung
+### Filtergruppen
+
+| Feld | Wirkung |
+|---|---|
+| **Filtergruppe 1 / 2 – Eigenschaft** | Die Shopware-Eigenschaft, deren Optionen als Kacheln erscheinen. **Filtergruppe 1 wird zuerst angezeigt, dann Filtergruppe 2** – unabhängig von der Sortierung der Eigenschaftsgruppen in Shopware. Für „zuerst die A-Typen" also die A-Typ-Eigenschaft in Filtergruppe 1 legen. |
+| **Filtergruppe 1 / 2 – Überschrift** | Kleiner Text direkt vor den Kacheln dieser Gruppe. **Leer = keine Überschrift** (Standard – es stehen dann nur die Fahrzeugtypen da). Das Feld liegt direkt unter der jeweiligen Gruppe. |
+
+### Darstellung
 
 | Einstellung | Wirkung |
 |---|---|
-| **Sortierung der Fahrzeuge** | `Manuelle Reihenfolge` (Standard) = exakt die Reihenfolge, die du in der Eigenschaftsgruppe per Drag & Drop festlegst. Alternativ `A–Z` / `Z–A`. Mehrere Gruppen bleiben immer als Block zusammen (Reihenfolge = Gruppen-Position). |
+| **Anzeige** | `Alles in einem Balken` (Standard): eine Reihe, erst Gruppe 1, dann Gruppe 2. `Filtergruppen untereinander`: jede Gruppe in einer eigenen Zeile, „Alle"-Kachel in einer Zeile darüber. |
+| **Sortierung der Fahrzeuge** | Innerhalb einer Gruppe: `Manuelle Reihenfolge` (Standard) = Drag-&-Drop-Reihenfolge aus der Eigenschaftsgruppe. Alternativ `A–Z` / `Z–A`. |
 | **Maximale Anzahl Kacheln** | Obergrenze, falls eine Gruppe sehr viele Optionen hat. |
 | **„Alle"-Kachel anzeigen** | Kachel zum Aufheben des Filters. Aus = keine Reset-Kachel (Filter lässt sich weiter durch Klick auf die aktive Kachel aufheben). |
 | **Beschriftung der „Alle"-Kachel** | Freier Text, z. B. `Alle` oder `Zurücksetzen`. Leer = Standardtext. |
-| **Überschrift vor Gruppe A / B** | Kleiner Text links vor den Kacheln der jeweiligen Gruppe. **Leer = keine Überschrift** (Standard – es stehen dann nur die Fahrzeugtypen da). |
 
 Die sichtbaren Kacheltexte selbst sind die **Namen der Eigenschafts-Optionen** – die änderst du direkt in Shopware unter *Kataloge → Eigenschaften* (bzw. mehrsprachig je Übersetzung).
 

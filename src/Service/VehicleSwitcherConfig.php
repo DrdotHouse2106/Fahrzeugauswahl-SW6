@@ -15,6 +15,9 @@ class VehicleSwitcherConfig
     public const SORT_NAME_ASC = 'nameAsc';
     public const SORT_NAME_DESC = 'nameDesc';
 
+    public const LAYOUT_BAR = 'bar';
+    public const LAYOUT_STACKED = 'stacked';
+
     public function __construct(private readonly SystemConfigService $systemConfigService)
     {
     }
@@ -49,6 +52,13 @@ class VehicleSwitcherConfig
         $value = (int) $this->systemConfigService->get(self::PREFIX . 'maxOptions', $salesChannelId);
 
         return $value > 0 ? $value : 60;
+    }
+
+    public function getLayout(?string $salesChannelId): string
+    {
+        $value = $this->systemConfigService->get(self::PREFIX . 'layout', $salesChannelId);
+
+        return $value === self::LAYOUT_STACKED ? self::LAYOUT_STACKED : self::LAYOUT_BAR;
     }
 
     public function getSortMode(?string $salesChannelId): string

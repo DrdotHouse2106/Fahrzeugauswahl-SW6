@@ -14,27 +14,56 @@
     </card>
 
     <card>
-        <title>Eigenschaftsgruppen</title>
+        <title>Filtergruppen</title>
 
         <component name="sw-entity-single-select">
             <name>propertyGroupIdA</name>
             <entity>property_group</entity>
-            <label>Eigenschaftsgruppe „Geeignet für“</label>
+            <label>Filtergruppe 1 – Eigenschaft</label>
+            <helpText>Filtergruppe 1 wird zuerst angezeigt, danach Filtergruppe 2.</helpText>
         </component>
+
+        <input-field type="text">
+            <name>groupLabelA</name>
+            <label>Filtergruppe 1 – Überschrift (optional)</label>
+            <helpText>Kleiner Text vor den Kacheln dieser Gruppe. Leer lassen = keine Überschrift.</helpText>
+        </input-field>
 
         <component name="sw-entity-single-select">
             <name>propertyGroupIdB</name>
             <entity>property_group</entity>
-            <label>Eigenschaftsgruppe „Geeignet für A-Typ“</label>
+            <label>Filtergruppe 2 – Eigenschaft (optional)</label>
         </component>
+
+        <input-field type="text">
+            <name>groupLabelB</name>
+            <label>Filtergruppe 2 – Überschrift (optional)</label>
+            <helpText>Nur relevant, wenn Filtergruppe 2 gesetzt ist. Leer lassen = keine Überschrift.</helpText>
+        </input-field>
     </card>
 
     <card>
-        <title>Darstellung &amp; Beschriftung</title>
+        <title>Darstellung</title>
+
+        <input-field type="single-select">
+            <name>layout</name>
+            <label>Anzeige</label>
+            <options>
+                <option>
+                    <id>bar</id>
+                    <name>Alles in einem Balken (Filtergruppe 1, dann 2)</name>
+                </option>
+                <option>
+                    <id>stacked</id>
+                    <name>Filtergruppen untereinander</name>
+                </option>
+            </options>
+            <defaultValue>bar</defaultValue>
+        </input-field>
 
         <input-field type="single-select">
             <name>sortMode</name>
-            <label>Sortierung der Fahrzeuge</label>
+            <label>Sortierung der Fahrzeuge (innerhalb einer Gruppe)</label>
             <options>
                 <option>
                     <id>position</id>
@@ -71,18 +100,6 @@
             <label>Beschriftung der „Alle“-Kachel</label>
             <placeholder>Alle Fahrzeuge</placeholder>
             <helpText>Leer lassen für den Standardtext. Eigenen Text eintragen, z. B. „Alle“ oder „Zurücksetzen“.</helpText>
-        </input-field>
-
-        <input-field type="text">
-            <name>groupLabelA</name>
-            <label>Überschrift vor Gruppe A</label>
-            <helpText>Kleiner Text links vor den Kacheln der ersten Eigenschaftsgruppe. Leer lassen = keine Überschrift.</helpText>
-        </input-field>
-
-        <input-field type="text">
-            <name>groupLabelB</name>
-            <label>Überschrift vor Gruppe B</label>
-            <helpText>Nur relevant, wenn eine zweite Eigenschaftsgruppe konfiguriert ist. Leer lassen = keine Überschrift.</helpText>
         </input-field>
     </card>
 </config>

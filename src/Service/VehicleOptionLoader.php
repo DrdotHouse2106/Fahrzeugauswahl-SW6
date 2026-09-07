@@ -10,7 +10,9 @@ use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsAnyFilter;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Sorting\FieldSorting;
 
 /**
- * Lädt die Fahrzeug-Optionen der konfigurierten Eigenschaftsgruppen.
+ * Lädt die Fahrzeug-Optionen der konfigurierten Filtergruppen.
+ * Die Reihenfolge der Gruppen entspricht der Konfigurations-Reihenfolge
+ * (Filtergruppe 1, dann Filtergruppe 2) – nicht der property_group.position.
  */
 class VehicleOptionLoader
 {
@@ -19,7 +21,7 @@ class VehicleOptionLoader
     }
 
     /**
-     * @param list<string> $groupIds
+     * @param list<string>                 $groupIds Gruppen in gewünschter Anzeige-Reihenfolge
      * @param VehicleSwitcherConfig::SORT_* $sortMode
      */
     public function load(array $groupIds, int $limit, string $sortMode, Context $context): PropertyGroupOptionCollection
@@ -30,14 +32,10 @@ class VehicleOptionLoader
 
         $criteria = new Criteria();
         $criteria->addFilter(new EqualsAnyFilter('groupId', $groupIds));
-        $criteria->addAssociation('group');
-        $criteria->setLimit($limit);
+        $criteria->setLimit(max($limit, 1));
         $criteria->setTitle('vehicle-switcher::options');
 
-        // Gruppen bleiben immer als Block zusammen (Reihenfolge = Gruppen-Position).
-        $criteria->addSorting(new FieldSorting('group.position', FieldSorting::ASCENDING));
-
-        // Sortierung innerhalb der Gruppe.
+        // Sortierung innerhalb einer Gruppe.
         match ($sortMode) {
             VehicleSwitcherConfig::SORT_NAME_ASC => $criteria->addSorting(
                 new FieldSorting('name', FieldSorting::ASCENDING)
@@ -52,9 +50,21 @@ class VehicleOptionLoader
                 ->addSorting(new FieldSorting('name', FieldSorting::ASCENDING)),
         };
 
-        /** @var PropertyGroupOptionCollection $result */
-        $result = $this->propertyGroupOptionRepository->search($criteria, $context)->getEntities();
+        /** @var PropertyGroupOptionCollection $found */
+        $found = $this->propertyGroupOptionRepository->search($criteria, $context)->getEntities();
 
-        return $result;
+        // Nach Gruppen-Reihenfolge umsortieren; die DAL-Sortierung bleibt
+        // innerhalb jeder Gruppe erhalten.
+        $ordered = new PropertyGroupOptionCollection();
+
+        foreach ($groupIds as $groupId) {
+            foreach ($found as $option) {
+                if ($option->getGroupId() === $groupId) {
+                    $ordered->add($option);
+                }
+            }
+        }
+
+        return $ordered;
     }
 }

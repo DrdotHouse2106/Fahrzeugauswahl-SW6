@@ -51,6 +51,33 @@ $vs-pill-active-color: var(--vs-pill-active-color, #ffffff) !default;
         }
     }
 
+    // Layout "stacked": jede Filtergruppe in einer eigenen Zeile
+    &__row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        max-width: 1920px;
+        margin: 0 auto;
+        padding: 4px 12px;
+
+        & + & {
+            border-top: 1px solid $vs-bar-border;
+        }
+
+        .vehicle-switcher__track {
+            padding: 4px 0;
+            margin: 0;
+        }
+
+        .vehicle-switcher__group-label {
+            padding-left: 0;
+        }
+
+        @media (min-width: 768px) {
+            padding: 6px 24px;
+        }
+    }
+
     &__group-label {
         flex: 0 0 auto;
         font-size: 12px;

@@ -13,13 +13,16 @@ class VehicleSwitcherStruct extends Struct
 {
     /**
      * @param array<string, string> $groupLabels groupId => Überschrift
+     * @param list<string>           $groupOrder  groupIds in Anzeige-Reihenfolge
      */
     public function __construct(
         protected PropertyGroupOptionCollection $options,
         protected ?string $activeOptionId,
         protected bool $showAllOption = true,
         protected ?string $allOptionLabel = null,
-        protected array $groupLabels = []
+        protected array $groupLabels = [],
+        protected array $groupOrder = [],
+        protected string $layout = 'bar'
     ) {
     }
 
@@ -49,6 +52,19 @@ class VehicleSwitcherStruct extends Struct
     public function getGroupLabels(): array
     {
         return $this->groupLabels;
+    }
+
+    /**
+     * @return list<string>
+     */
+    public function getGroupOrder(): array
+    {
+        return $this->groupOrder;
+    }
+
+    public function getLayout(): string
+    {
+        return $this->layout;
     }
 
     public function getApiAlias(): string

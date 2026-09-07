@@ -69,20 +69,27 @@ Settings → System → Plugins → *Fahrzeug-Schnellauswahl* → *Config*
 
 1. **Pick the sales channel at the top** (not "All sales channels").
 2. Enable "Enable in this sales channel".
-3. Choose the "Suitable for" property group and optionally "Suitable for A-type".
+3. Card **Filter groups**: pick "Filter group 1 – property", optionally "Filter group 2".
 4. Save. Repeat steps 1–3 for further shops; sales channels left unconfigured stay untouched.
 
 All settings below are configurable **per sales channel**.
 
-### Appearance & labelling
+### Filter groups
+
+| Field | Effect |
+|---|---|
+| **Filter group 1 / 2 – property** | The Shopware property whose options become pills. **Filter group 1 is shown first, then group 2** – regardless of the property groups' own sorting in Shopware. So to get "A-types first", put the A-type property into filter group 1. |
+| **Filter group 1 / 2 – heading** | Small text directly before that group's pills. **Empty = no heading** (default – just the vehicle types). The field sits right under its group select. |
+
+### Appearance
 
 | Setting | Effect |
 |---|---|
-| **Vehicle sorting** | `Manual order` (default) = exactly the order you set in the property group via drag & drop. Or `A–Z` / `Z–A`. Multiple groups always stay as one block (order = group position). |
+| **Display** | `Everything in one bar` (default): one row, group 1 then group 2. `Filter groups stacked`: each group on its own row, the "all" pill on a row above. |
+| **Vehicle sorting** | Within a group: `Manual order` (default) = drag & drop order from the property group. Or `A–Z` / `Z–A`. |
 | **Maximum number of pills** | Upper limit for groups with many options. |
 | **Show "all" pill** | The reset pill. Off = no reset pill (the filter can still be cleared by clicking the active pill). |
 | **"All" pill label** | Free text, e.g. `All` or `Reset`. Empty = default text. |
-| **Heading before group A / B** | Small text left of that group's pills. **Empty = no heading** (default – just the vehicle types). |
 
 The pill captions themselves are the **names of the property options** – edit them directly in Shopware under *Catalogues → Properties* (per translation for multiple languages).
 

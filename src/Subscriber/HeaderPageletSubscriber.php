@@ -69,7 +69,9 @@ class HeaderPageletSubscriber implements EventSubscriberInterface
                 $activeId,
                 $this->config->showAllOption($salesChannelId),
                 $this->config->getAllOptionLabel($salesChannelId),
-                $this->config->getGroupLabels($salesChannelId)
+                $this->config->getGroupLabels($salesChannelId),
+                $groupIds,
+                $this->config->getLayout($salesChannelId)
             )
         );
     }

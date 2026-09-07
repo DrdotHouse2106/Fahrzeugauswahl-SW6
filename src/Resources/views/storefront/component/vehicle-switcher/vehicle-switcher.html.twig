@@ -1,5 +1,34 @@
+{% import _self as vsw %}
+
+{% macro option_pill(option, activeOptionId) %}
+    {% set label = option.translated.name ?? option.name %}
+    <button type="button"
+            class="vehicle-switcher__item{% if option.id == activeOptionId %} is-active{% endif %}"
+            data-vehicle-switcher-item
+            data-option-id="{{ option.id }}"
+            title="{{ label|sw_sanitize }}"
+            aria-pressed="{{ option.id == activeOptionId ? 'true' : 'false' }}">
+        {{ label|sw_sanitize }}
+    </button>
+{% endmacro %}
+
+{% macro all_pill(activeOptionId, allOptionLabel) %}
+    <button type="button"
+            class="vehicle-switcher__item vehicle-switcher__item--all{% if activeOptionId is null %} is-active{% endif %}"
+            data-vehicle-switcher-item
+            data-option-id=""
+            aria-pressed="{{ activeOptionId is null ? 'true' : 'false' }}">
+        {%- if allOptionLabel is not empty -%}
+            {{ allOptionLabel|sw_sanitize }}
+        {%- else -%}
+            {{ 'vehicle-switcher.showAll'|trans|sw_sanitize }}
+        {%- endif -%}
+    </button>
+{% endmacro %}
+
 {% block component_vehicle_switcher %}
-    <div class="vehicle-switcher"
+    {% set layout = layout|default('bar') %}
+    <div class="vehicle-switcher vehicle-switcher--{{ layout }}"
          data-vehicle-switcher="true"
          data-vehicle-switcher-options="{{ {
              selectRoute: path('frontend.vehicle-switcher.select'),
@@ -8,46 +37,65 @@
          }|json_encode }}">
 
         {% block component_vehicle_switcher_inner %}
-            <div class="vehicle-switcher__track" role="group" aria-label="{{ 'vehicle-switcher.ariaLabel'|trans|sw_sanitize }}">
 
-                {% block component_vehicle_switcher_all %}
-                    {% if showAllOption %}
-                        <button type="button"
-                                class="vehicle-switcher__item vehicle-switcher__item--all{% if activeOptionId is null %} is-active{% endif %}"
-                                data-vehicle-switcher-item
-                                data-option-id=""
-                                aria-pressed="{{ activeOptionId is null ? 'true' : 'false' }}">
-                            {%- if allOptionLabel is not empty -%}
-                                {{ allOptionLabel|sw_sanitize }}
-                            {%- else -%}
-                                {{ 'vehicle-switcher.showAll'|trans|sw_sanitize }}
-                            {%- endif -%}
-                        </button>
+            {#  ----------  Gruppen untereinander  ----------  #}
+            {% if layout == 'stacked' %}
+                {% if showAllOption %}
+                    <div class="vehicle-switcher__row vehicle-switcher__row--all">
+                        <div class="vehicle-switcher__track">
+                            {{ vsw.all_pill(activeOptionId, allOptionLabel) }}
+                        </div>
+                    </div>
+                {% endif %}
+
+                {% for groupId in groupOrder %}
+                    {% set groupLabel = groupLabels[groupId]|default('') %}
+                    {% set groupOptions = options.filterByGroupId(groupId) %}
+
+                    {% if groupOptions.count > 0 %}
+                        {% block component_vehicle_switcher_row %}
+                            <div class="vehicle-switcher__row">
+                                {% if groupLabel is not empty %}
+                                    <span class="vehicle-switcher__group-label">{{ groupLabel|sw_sanitize }}</span>
+                                {% endif %}
+
+                                <div class="vehicle-switcher__track" role="group"
+                                     aria-label="{{ groupLabel is not empty ? groupLabel|sw_sanitize : 'vehicle-switcher.ariaLabel'|trans|sw_sanitize }}">
+                                    {% for option in groupOptions %}
+                                        {{ vsw.option_pill(option, activeOptionId) }}
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% endblock %}
                     {% endif %}
-                {% endblock %}
+                {% endfor %}
 
-                {% block component_vehicle_switcher_items %}
-                    {% set currentGroupId = null %}
-                    {% for option in options %}
-                        {% if option.groupId != currentGroupId %}
-                            {% set currentGroupId = option.groupId %}
-                            {% set groupLabel = groupLabels[option.groupId]|default('') %}
-                            {% if groupLabel is not empty %}
-                                <span class="vehicle-switcher__group-label">{{ groupLabel|sw_sanitize }}</span>
-                            {% endif %}
+            {#  ----------  Alles in einem Balken  ----------  #}
+            {% else %}
+                {% block component_vehicle_switcher_bar %}
+                    <div class="vehicle-switcher__track" role="group"
+                         aria-label="{{ 'vehicle-switcher.ariaLabel'|trans|sw_sanitize }}">
+
+                        {% if showAllOption %}
+                            {{ vsw.all_pill(activeOptionId, allOptionLabel) }}
                         {% endif %}
 
-                        <button type="button"
-                                class="vehicle-switcher__item{% if option.id == activeOptionId %} is-active{% endif %}"
-                                data-vehicle-switcher-item
-                                data-option-id="{{ option.id }}"
-                                title="{{ (option.translated.name ?? option.name)|sw_sanitize }}"
-                                aria-pressed="{{ option.id == activeOptionId ? 'true' : 'false' }}">
-                            {{ (option.translated.name ?? option.name)|sw_sanitize }}
-                        </button>
-                    {% endfor %}
+                        {% set currentGroupId = null %}
+                        {% for option in options %}
+                            {% if option.groupId != currentGroupId %}
+                                {% set currentGroupId = option.groupId %}
+                                {% set groupLabel = groupLabels[option.groupId]|default('') %}
+                                {% if groupLabel is not empty %}
+                                    <span class="vehicle-switcher__group-label">{{ groupLabel|sw_sanitize }}</span>
+                                {% endif %}
+                            {% endif %}
+
+                            {{ vsw.option_pill(option, activeOptionId) }}
+                        {% endfor %}
+                    </div>
                 {% endblock %}
-            </div>
+            {% endif %}
+
         {% endblock %}
     </div>
 {% endblock %}

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/shopware/platform/trunk/src/Core/System/SystemConfig/Schema/config.xsd">
+
+    <card>
+        <title>Fahrzeug-Schnellauswahl</title>
+        <title lang="en-GB">Vehicle quick switcher</title>
+
+        <component name="sw-help-text">
+            <text>Die Konfiguration ist pro Verkaufskanal möglich. Wähle oben in der Plugin-Konfiguration den gewünschten Verkaufskanal aus und aktiviere die Schnellauswahl nur dort, wo sie erscheinen soll.</text>
+            <text lang="en-GB">This configuration is sales-channel aware. Pick a sales channel at the top of the plugin config and enable the switcher only where it should appear.</text>
+        </component>
+
+        <input-field type="bool">
+            <name>active</name>
+            <label>In diesem Verkaufskanal aktivieren</label>
+            <label lang="en-GB">Enable in this sales channel</label>
+            <helpText>Nur wenn aktiviert, wird die Kachel-Leiste angezeigt UND der globale Kategoriefilter angewendet.</helpText>
+            <helpText lang="en-GB">Only when enabled the pill bar is rendered AND the global listing filter is applied.</helpText>
+            <defaultValue>false</defaultValue>
+        </input-field>
+    </card>
+
+    <card>
+        <title>Eigenschaftsgruppen (ERPNext: „Geeignet für“)</title>
+        <title lang="en-GB">Property groups (ERPNext: "Suitable for")</title>
+
+        <component name="sw-entity-single-select">
+            <name>propertyGroupIdA</name>
+            <entity>property_group</entity>
+            <label>Eigenschaftsgruppe „Geeignet für“</label>
+            <label lang="en-GB">Property group "Suitable for"</label>
+        </component>
+
+        <component name="sw-entity-single-select">
+            <name>propertyGroupIdB</name>
+            <entity>property_group</entity>
+            <label>Eigenschaftsgruppe „Geeignet für A-Typ“</label>
+            <label lang="en-GB">Property group "Suitable for A-type"</label>
+        </component>
+    </card>
+
+    <card>
+        <title>Darstellung</title>
+        <title lang="en-GB">Appearance</title>
+
+        <input-field type="int">
+            <name>maxOptions</name>
+            <label>Maximale Anzahl Kacheln</label>
+            <label lang="en-GB">Maximum number of pills</label>
+            <defaultValue>60</defaultValue>
+        </input-field>
+
+        <input-field type="bool">
+            <name>showGroupLabel</name>
+            <label>Gruppennamen als Zwischenüberschrift zeigen</label>
+            <label lang="en-GB">Show group name as inline label</label>
+            <defaultValue>false</defaultValue>
+        </input-field>
+    </card>
+</config>

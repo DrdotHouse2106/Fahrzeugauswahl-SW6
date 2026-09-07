@@ -1,0 +1,33 @@
+{
+    "name": "ulber/fahrzeug-schnellauswahl",
+    "description": "Globale horizontale Fahrzeug-Schnellauswahl (Horizontal Vehicle Switcher) für die Shopware 6.6 Storefront",
+    "version": "1.0.0",
+    "type": "shopware-platform-plugin",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Marcel Ulber"
+        }
+    ],
+    "require": {
+        "php": ">=8.2",
+        "shopware/core": "^6.6",
+        "shopware/storefront": "^6.6"
+    },
+    "autoload": {
+        "psr-4": {
+            "Ulber\\FahrzeugSchnellauswahl\\": "src/"
+        }
+    },
+    "extra": {
+        "shopware-plugin-class": "Ulber\\FahrzeugSchnellauswahl\\FahrzeugSchnellauswahl",
+        "label": {
+            "de-DE": "Fahrzeug-Schnellauswahl",
+            "en-GB": "Vehicle quick switcher"
+        },
+        "description": {
+            "de-DE": "Horizontale Fahrzeug-Schnellauswahl im Storefront-Header. Filtert die komplette Produktauflistung global über Shopware-Eigenschaften.",
+            "en-GB": "Horizontal vehicle quick switcher in the storefront header. Filters the whole product listing globally via Shopware properties."
+        }
+    }
+}

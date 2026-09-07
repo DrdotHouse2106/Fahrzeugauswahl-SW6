@@ -1,0 +1,7 @@
+{
+    "vehicle-switcher": {
+        "ariaLabel": "Vehicle quick switcher",
+        "showAll": "All vehicles",
+        "activeHint": "Active vehicle"
+    }
+}

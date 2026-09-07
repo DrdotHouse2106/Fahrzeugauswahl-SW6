@@ -1,0 +1,39 @@
+<?xml version="1.0" ?>
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+        <service id="Ulber\FahrzeugSchnellauswahl\Service\VehicleSwitcherConfig">
+            <argument type="service" id="Shopware\Core\System\SystemConfig\SystemConfigService"/>
+        </service>
+
+        <service id="Ulber\FahrzeugSchnellauswahl\Service\VehicleSelectionStorage">
+            <argument type="service" id="request_stack"/>
+        </service>
+
+        <service id="Ulber\FahrzeugSchnellauswahl\Service\VehicleOptionLoader">
+            <argument type="service" id="property_group_option.repository"/>
+        </service>
+
+        <service id="Ulber\FahrzeugSchnellauswahl\Subscriber\HeaderPageletSubscriber">
+            <argument type="service" id="Ulber\FahrzeugSchnellauswahl\Service\VehicleSwitcherConfig"/>
+            <argument type="service" id="Ulber\FahrzeugSchnellauswahl\Service\VehicleOptionLoader"/>
+            <argument type="service" id="Ulber\FahrzeugSchnellauswahl\Service\VehicleSelectionStorage"/>
+            <tag name="kernel.event_subscriber"/>
+        </service>
+
+        <service id="Ulber\FahrzeugSchnellauswahl\Subscriber\ProductListingSubscriber">
+            <argument type="service" id="Ulber\FahrzeugSchnellauswahl\Service\VehicleSwitcherConfig"/>
+            <argument type="service" id="Ulber\FahrzeugSchnellauswahl\Service\VehicleSelectionStorage"/>
+            <tag name="kernel.event_subscriber"/>
+        </service>
+
+        <service id="Ulber\FahrzeugSchnellauswahl\Controller\VehicleSwitcherController" public="true">
+            <argument type="service" id="Ulber\FahrzeugSchnellauswahl\Service\VehicleSelectionStorage"/>
+            <call method="setContainer">
+                <argument type="service" id="service_container"/>
+            </call>
+        </service>
+    </services>
+</container>

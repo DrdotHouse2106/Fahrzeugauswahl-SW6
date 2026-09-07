@@ -1,0 +1,19 @@
+{% sw_extends '@Storefront/storefront/layout/header/header.html.twig' %}
+
+{#
+    Fügt die horizontale Fahrzeug-Schnellauswahl direkt unter dem Header ein.
+    Die Extension wird im HeaderPageletSubscriber gesetzt.
+#}
+{% block layout_header %}
+    {{ parent() }}
+
+    {% set vehicleSwitcher = page.header.extensions.vehicleSwitcher ?? null %}
+
+    {% if vehicleSwitcher and vehicleSwitcher.options.count > 0 %}
+        {% sw_include '@Storefront/storefront/component/vehicle-switcher/vehicle-switcher.html.twig' with {
+            options: vehicleSwitcher.options,
+            activeOptionId: vehicleSwitcher.activeOptionId,
+            showGroupLabel: vehicleSwitcher.showGroupLabel
+        } %}
+    {% endif %}
+{% endblock %}

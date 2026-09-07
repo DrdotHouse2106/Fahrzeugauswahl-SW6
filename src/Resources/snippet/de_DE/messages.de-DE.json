@@ -1,0 +1,7 @@
+{
+    "vehicle-switcher": {
+        "ariaLabel": "Fahrzeug-Schnellauswahl",
+        "showAll": "Alle Fahrzeuge",
+        "activeHint": "Aktives Fahrzeug"
+    }
+}

@@ -1,0 +1,73 @@
+<?php declare(strict_types=1);
+
+namespace Ulber\FahrzeugSchnellauswahl\Subscriber;
+
+use Shopware\Storefront\Pagelet\Header\HeaderPageletLoadedEvent;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Ulber\FahrzeugSchnellauswahl\Service\VehicleOptionLoader;
+use Ulber\FahrzeugSchnellauswahl\Service\VehicleSelectionStorage;
+use Ulber\FahrzeugSchnellauswahl\Service\VehicleSwitcherConfig;
+use Ulber\FahrzeugSchnellauswahl\Struct\VehicleSwitcherStruct;
+
+/**
+ * Hängt die Fahrzeug-Optionen + aktive Auswahl als Extension an das Header-Pagelet.
+ * Läuft auf jeder Seite (Header ist global) -> Switcher ist global sichtbar.
+ */
+class HeaderPageletSubscriber implements EventSubscriberInterface
+{
+    public function __construct(
+        private readonly VehicleSwitcherConfig $config,
+        private readonly VehicleOptionLoader $optionLoader,
+        private readonly VehicleSelectionStorage $selectionStorage
+    ) {
+    }
+
+    public static function getSubscribedEvents(): array
+    {
+        return [
+            HeaderPageletLoadedEvent::class => 'onHeaderLoaded',
+        ];
+    }
+
+    public function onHeaderLoaded(HeaderPageletLoadedEvent $event): void
+    {
+        $salesChannelId = $event->getSalesChannelContext()->getSalesChannelId();
+
+        if (!$this->config->isActive($salesChannelId)) {
+            return;
+        }
+
+        $groupIds = $this->config->getPropertyGroupIds($salesChannelId);
+
+        if ($groupIds === []) {
+            return;
+        }
+
+        $options = $this->optionLoader->load(
+            $groupIds,
+            $this->config->getMaxOptions($salesChannelId),
+            $event->getContext()
+        );
+
+        if ($options->count() === 0) {
+            return;
+        }
+
+        $activeId = $this->selectionStorage->get();
+
+        // Aktive Option muss zu den aktuell sichtbaren Optionen passen,
+        // sonst kann der Kunde sie nie wieder abwählen.
+        if ($activeId !== null && !$options->has($activeId)) {
+            $activeId = null;
+        }
+
+        $event->getPagelet()->addExtension(
+            'vehicleSwitcher',
+            new VehicleSwitcherStruct(
+                $options,
+                $activeId,
+                $this->config->showGroupLabel($salesChannelId)
+            )
+        );
+    }
+}

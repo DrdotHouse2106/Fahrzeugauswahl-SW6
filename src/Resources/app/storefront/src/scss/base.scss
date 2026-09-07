@@ -1,0 +1,118 @@
+// =============================================================
+//  Horizontal Vehicle Switcher – Storefront Top-Bar
+// =============================================================
+
+$vs-bar-bg:            var(--vs-bar-bg, #f6f6f7) !default;
+$vs-bar-border:        var(--vs-bar-border, #e3e3e5) !default;
+$vs-pill-bg:           var(--vs-pill-bg, #ffffff) !default;
+$vs-pill-color:        var(--vs-pill-color, #4a4a4a) !default;
+$vs-pill-border:       var(--vs-pill-border, #d1d1d3) !default;
+$vs-pill-hover-border: var(--vs-pill-hover-border, #8a8a8a) !default;
+$vs-pill-active-bg:    var(--vs-pill-active-bg, #1d1d1f) !default;
+$vs-pill-active-color: var(--vs-pill-active-color, #ffffff) !default;
+
+.vehicle-switcher {
+    background-color: $vs-bar-bg;
+    border-bottom: 1px solid $vs-bar-border;
+    position: relative;
+
+    &--loading {
+        opacity: .6;
+        pointer-events: none;
+    }
+
+    &__track {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 12px;
+        max-width: 1920px;
+        margin: 0 auto;
+
+        // Mobile: horizontale Scroll-Leiste
+        overflow-x: auto;
+        overflow-y: hidden;
+        -webkit-overflow-scrolling: touch;
+        scroll-snap-type: x proximity;
+        scrollbar-width: thin;
+        scrollbar-color: rgba(0, 0, 0, .25) transparent;
+
+        &::-webkit-scrollbar {
+            height: 4px;
+        }
+
+        &::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        &::-webkit-scrollbar-thumb {
+            background-color: rgba(0, 0, 0, .25);
+            border-radius: 4px;
+        }
+    }
+
+    &__group-label {
+        flex: 0 0 auto;
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: .04em;
+        color: rgba(0, 0, 0, .45);
+        padding: 0 4px 0 8px;
+        white-space: nowrap;
+
+        &:first-child {
+            padding-left: 0;
+        }
+    }
+
+    &__item {
+        flex: 0 0 auto;
+        scroll-snap-align: start;
+        display: inline-flex;
+        align-items: center;
+        white-space: nowrap;
+
+        appearance: none;
+        border: 1px solid $vs-pill-border;
+        border-radius: 999px;
+        background-color: $vs-pill-bg;
+        color: $vs-pill-color;
+
+        padding: 6px 14px;
+        font-size: 14px;
+        line-height: 1.2;
+        font-weight: 500;
+        cursor: pointer;
+        user-select: none;
+        transition: background-color .15s ease, color .15s ease, border-color .15s ease, box-shadow .15s ease;
+
+        &:hover {
+            border-color: $vs-pill-hover-border;
+        }
+
+        &:focus-visible {
+            outline: 2px solid $vs-pill-active-bg;
+            outline-offset: 2px;
+        }
+
+        &.is-active {
+            background-color: $vs-pill-active-bg;
+            border-color: $vs-pill-active-bg;
+            color: $vs-pill-active-color;
+        }
+
+        &--all {
+            font-weight: 600;
+        }
+    }
+
+    // Desktop: umbrechen statt scrollen
+    @media (min-width: 768px) {
+        &__track {
+            flex-wrap: wrap;
+            overflow-x: visible;
+            row-gap: 8px;
+            padding: 10px 24px;
+        }
+    }
+}

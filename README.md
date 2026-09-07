@@ -4,13 +4,15 @@ Schlankes Shopware 6.6+ Plugin für eine globale, horizontale Fahrzeug-Schnellau
 im Storefront-Header. Kein Dropdown – Fahrzeuge werden als Kacheln / Pills nebeneinander
 angezeigt. Single-Select per Klick, global über alle Kategorien.
 
+> English version: [README.en.md](README.en.md)
+
 ## Funktionsweise
 
 | Schritt | Was passiert |
 |--------|--------------|
-| Datenbasis | Shopware-**Eigenschaften** (Properties). Zwei Eigenschaftsgruppen werden im Admin konfiguriert (z.B. „Geeignet für" / „Geeignet für A-Typ"), befüllt aus den ERPNext-Multiselect-Feldern. |
+| Datenbasis | Ganz normale Shopware-**Eigenschaften** (Properties). Zwei Eigenschaftsgruppen werden im Admin ausgewählt (z. B. „Geeignet für" / „Geeignet für A-Typ"). Wie diese Gruppen befüllt werden – manuell, per Import oder aus einem ERP – ist dem Plugin egal. |
 | Anzeige | `HeaderPageletSubscriber` hängt die Optionen der Gruppen als Extension `vehicleSwitcher` an das Header-Pagelet. Twig rendert die Pill-Leiste unter dem Header. |
-| Auswahl | JS-Plugin `VehicleSwitcher`: Klick → genau ein Fahrzeug aktiv (kein Stacking). Klick auf aktives Fahrzeug oder auf „Alle Fahrzeuge" → Auswahl aufgehoben. Wert landet in `localStorage` **und** per POST in der SalesChannel-Session. |
+| Auswahl | JS-Plugin `VehicleSwitcher`: Klick → genau ein Fahrzeug aktiv (kein Stacking). Klick auf das aktive Fahrzeug oder auf „Alle Fahrzeuge" → Auswahl aufgehoben. Wert landet in `localStorage` **und** per POST in der SalesChannel-Session. |
 | Globaler Filter | `ProductListingSubscriber` hört auf `ProductListingCriteriaEvent` / `ProductSearchCriteriaEvent` / `ProductSuggestCriteriaEvent` und fügt bei aktivem Fahrzeug `EqualsFilter('product.properties.id', <optionId>)` zum `Criteria` hinzu – für **jede** Kategorie / Suche. |
 | Multi-Shop | `config.xml` ist Sales-Channel-spezifisch. `active` steuert pro Verkaufskanal, ob Leiste **und** Filter greifen. |
 
@@ -36,10 +38,10 @@ angezeigt. Single-Select per Klick, global über alle Kategorien.
         ├── config/
         │   ├── config.xml                       # Admin-Konfiguration
         │   ├── services.xml
-        │   └── routes.xml
+        │   └── routes.php
         ├── snippet/
         │   ├── de_DE/messages.de-DE.json
-        │   └── en_GB/messages.en-GB.json
+        │   └── en_GB/messages.en-GB.json        # nur technischer Fallback
         ├── views/storefront/
         │   ├── layout/header/header.html.twig
         │   └── component/vehicle-switcher/vehicle-switcher.html.twig
@@ -70,11 +72,18 @@ Einstellungen → System → Plugins → *Fahrzeug-Schnellauswahl* → *Konfigur
 3. Eigenschaftsgruppe „Geeignet für" und optional „Geeignet für A-Typ" wählen.
 4. Speichern. Für weitere Shops Schritt 1–3 wiederholen; nicht konfigurierte Kanäle bleiben unberührt.
 
-## ERPNext-Anbindung
+## Eigenschaften befüllen
 
-Das Plugin selbst spricht **nicht** mit ERPNext. Der bestehende Produkt-Sync muss die
-ERPNext-Multiselect-Werte in Shopware-Eigenschaften (`property_group_option`) übersetzen
-und den Produkten zuweisen. Das Plugin liest anschließend nur noch diese Eigenschaften.
+Das Plugin liest nur `property_group` / `property_group_option` und die Zuordnung
+`product.properties`. Wer die Werte pflegt, ist offen:
+
+- von Hand im Admin (Kataloge → Eigenschaften, dann am Produkt zuweisen),
+- per Produkt-Import (CSV / API),
+- aus einem ERP (z. B. ERPNext-Multiselect-Feld → Shopware-Eigenschaft) über den
+  bestehenden Produkt-Sync.
+
+Sobald die Optionen einer konfigurierten Gruppe an Produkten hängen, erscheinen sie
+automatisch als Kacheln.
 
 ## Hinweise
 

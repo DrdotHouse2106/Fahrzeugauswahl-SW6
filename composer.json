@@ -22,12 +22,10 @@
     "extra": {
         "shopware-plugin-class": "Ulber\\FahrzeugSchnellauswahl\\FahrzeugSchnellauswahl",
         "label": {
-            "de-DE": "Fahrzeug-Schnellauswahl",
-            "en-GB": "Vehicle quick switcher"
+            "de-DE": "Fahrzeug-Schnellauswahl"
         },
         "description": {
-            "de-DE": "Horizontale Fahrzeug-Schnellauswahl im Storefront-Header. Filtert die komplette Produktauflistung global über Shopware-Eigenschaften.",
-            "en-GB": "Horizontal vehicle quick switcher in the storefront header. Filters the whole product listing globally via Shopware properties."
+            "de-DE": "Horizontale Fahrzeug-Schnellauswahl im Storefront-Header. Filtert die komplette Produktauflistung global über Shopware-Eigenschaften."
         }
     }
 }

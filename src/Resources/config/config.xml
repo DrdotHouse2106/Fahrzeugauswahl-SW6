@@ -4,52 +4,43 @@
 
     <card>
         <title>Fahrzeug-Schnellauswahl</title>
-        <title lang="en-GB">Vehicle quick switcher</title>
 
         <input-field type="bool">
             <name>active</name>
             <label>In diesem Verkaufskanal aktivieren</label>
-            <label lang="en-GB">Enable in this sales channel</label>
-            <helpText>Nur wenn aktiviert, wird die Kachel-Leiste angezeigt UND der globale Kategoriefilter angewendet.</helpText>
-            <helpText lang="en-GB">Only when enabled the pill bar is rendered AND the global listing filter is applied.</helpText>
+            <helpText>Nur wenn aktiviert, wird die Kachel-Leiste angezeigt UND der globale Kategoriefilter angewendet. Die Konfiguration ist pro Verkaufskanal möglich – oben den gewünschten Verkaufskanal auswählen.</helpText>
             <defaultValue>false</defaultValue>
         </input-field>
     </card>
 
     <card>
-        <title>Eigenschaftsgruppen (ERPNext: „Geeignet für“)</title>
-        <title lang="en-GB">Property groups (ERPNext: "Suitable for")</title>
+        <title>Eigenschaftsgruppen</title>
 
         <component name="sw-entity-single-select">
             <name>propertyGroupIdA</name>
             <entity>property_group</entity>
             <label>Eigenschaftsgruppe „Geeignet für“</label>
-            <label lang="en-GB">Property group "Suitable for"</label>
         </component>
 
         <component name="sw-entity-single-select">
             <name>propertyGroupIdB</name>
             <entity>property_group</entity>
             <label>Eigenschaftsgruppe „Geeignet für A-Typ“</label>
-            <label lang="en-GB">Property group "Suitable for A-type"</label>
         </component>
     </card>
 
     <card>
         <title>Darstellung</title>
-        <title lang="en-GB">Appearance</title>
 
         <input-field type="int">
             <name>maxOptions</name>
             <label>Maximale Anzahl Kacheln</label>
-            <label lang="en-GB">Maximum number of pills</label>
             <defaultValue>60</defaultValue>
         </input-field>
 
         <input-field type="bool">
             <name>showGroupLabel</name>
             <label>Gruppennamen als Zwischenüberschrift zeigen</label>
-            <label lang="en-GB">Show group name as inline label</label>
             <defaultValue>false</defaultValue>
         </input-field>
     </card>

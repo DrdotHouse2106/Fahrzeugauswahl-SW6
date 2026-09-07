@@ -7,7 +7,7 @@
 {% block layout_header %}
     {{ parent() }}
 
-    {% set vehicleSwitcher = page.header.extensions.vehicleSwitcher ?? null %}
+    {% set vehicleSwitcher = header.extensions.vehicleSwitcher ?? null %}
 
     {% if vehicleSwitcher and vehicleSwitcher.options.count > 0 %}
         {% sw_include '@Storefront/storefront/component/vehicle-switcher/vehicle-switcher.html.twig' with {

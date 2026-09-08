@@ -12,8 +12,9 @@ use Shopware\Core\Framework\Struct\Struct;
 class VehicleSwitcherStruct extends Struct
 {
     /**
-     * @param array<string, string> $groupLabels groupId => Überschrift
-     * @param list<string>           $groupOrder  groupIds in Anzeige-Reihenfolge
+     * @param array<string, string> $groupLabels   groupId => Überschrift
+     * @param list<string>           $groupOrder    groupIds in Anzeige-Reihenfolge
+     * @param array<string, string>  $displayLabels optionId => gekürzte Kachel-Beschriftung
      */
     public function __construct(
         protected PropertyGroupOptionCollection $options,
@@ -22,7 +23,8 @@ class VehicleSwitcherStruct extends Struct
         protected ?string $allOptionLabel = null,
         protected array $groupLabels = [],
         protected array $groupOrder = [],
-        protected string $layout = 'bar'
+        protected string $layout = 'bar',
+        protected array $displayLabels = []
     ) {
     }
 
@@ -65,6 +67,14 @@ class VehicleSwitcherStruct extends Struct
     public function getLayout(): string
     {
         return $this->layout;
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public function getDisplayLabels(): array
+    {
+        return $this->displayLabels;
     }
 
     public function getApiAlias(): string

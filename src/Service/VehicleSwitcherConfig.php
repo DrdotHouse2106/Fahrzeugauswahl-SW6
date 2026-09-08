@@ -119,6 +119,54 @@ class VehicleSwitcherConfig
         return $labels;
     }
 
+    /**
+     * Präfixe, die in der Kachel-Beschriftung entfernt werden (Anzeige only).
+     * Komma-getrennt konfigurierbar, z. B. "Citroën, Citroen".
+     *
+     * @return list<string>
+     */
+    public function getStripPrefixes(?string $salesChannelId): array
+    {
+        $value = $this->systemConfigService->get(self::PREFIX . 'stripLabelPrefix', $salesChannelId);
+
+        if (!\is_string($value) || trim($value) === '') {
+            return [];
+        }
+
+        $prefixes = [];
+        foreach (explode(',', $value) as $part) {
+            $part = trim($part);
+            if ($part !== '') {
+                $prefixes[] = $part;
+            }
+        }
+
+        // Längste zuerst, damit "Citroën AK" vor "Citroën" greift.
+        usort($prefixes, static fn (string $a, string $b): int => mb_strlen($b) <=> mb_strlen($a));
+
+        return $prefixes;
+    }
+
+    /**
+     * Entfernt das erste passende Präfix vom Anfang des Namens.
+     *
+     * @param list<string> $prefixes
+     */
+    public function applyStripPrefixes(string $name, array $prefixes): string
+    {
+        foreach ($prefixes as $prefix) {
+            if (mb_stripos($name, $prefix) === 0) {
+                $stripped = trim(mb_substr($name, mb_strlen($prefix)));
+                // Führende Trenner (–, -, :) mit entfernen.
+                $stripped = ltrim($stripped, " \t-–—:•|");
+
+                return $stripped !== '' ? $stripped : $name;
+            }
+        }
+
+        return $name;
+    }
+
     private function trimToNull(mixed $value): ?string
     {
         if (!\is_string($value)) {

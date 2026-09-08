@@ -88,6 +88,13 @@
             <defaultValue>60</defaultValue>
         </input-field>
 
+        <input-field type="text">
+            <name>stripLabelPrefix</name>
+            <label>Präfix in den Kacheln ausblenden</label>
+            <placeholder>Citroën</placeholder>
+            <helpText>Text, der am Anfang jeder Kachel-Beschriftung entfernt wird – z. B. „Citroën“, damit aus „Citroën 2CV6“ nur „2CV6“ wird. Betrifft NUR die Anzeige in der Leiste; die Eigenschaft selbst (Filter, SEO, Produktdetails) bleibt unverändert. Mehrere Präfixe mit Komma trennen, z. B. „Citroën, Citroen“. Tipp: Präfix ausblenden + als Gruppen-Überschrift setzen ergibt „Citroën: [2CV6] [2CV4] …“.</helpText>
+        </input-field>
+
         <input-field type="bool">
             <name>showAllOption</name>
             <label>„Alle“-Kachel anzeigen</label>

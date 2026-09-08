@@ -1,12 +1,13 @@
 {% import _self as vsw %}
 
-{% macro option_pill(option, activeOptionId) %}
-    {% set label = option.translated.name ?? option.name %}
+{% macro option_pill(option, activeOptionId, displayLabels) %}
+    {% set fullName = option.translated.name ?? option.name %}
+    {% set label = displayLabels[option.id]|default(fullName) %}
     <button type="button"
             class="vehicle-switcher__item{% if option.id == activeOptionId %} is-active{% endif %}"
             data-vehicle-switcher-item
             data-option-id="{{ option.id }}"
-            title="{{ label|sw_sanitize }}"
+            title="{{ fullName|sw_sanitize }}"
             aria-pressed="{{ option.id == activeOptionId ? 'true' : 'false' }}">
         {{ label|sw_sanitize }}
     </button>
@@ -57,7 +58,7 @@
                                 <div class="vehicle-switcher__track" role="group"
                                      aria-label="{{ groupLabel is not empty ? groupLabel|sw_sanitize : 'vehicle-switcher.ariaLabel'|trans|sw_sanitize }}">
                                     {% for option in groupOptions %}
-                                        {{ vsw.option_pill(option, activeOptionId) }}
+                                        {{ vsw.option_pill(option, activeOptionId, displayLabels) }}
                                     {% endfor %}
                                 </div>
                             </div>
@@ -85,7 +86,7 @@
                                 {% endif %}
                             {% endif %}
 
-                            {{ vsw.option_pill(option, activeOptionId) }}
+                            {{ vsw.option_pill(option, activeOptionId, displayLabels) }}
                         {% endfor %}
                     </div>
                 {% endblock %}

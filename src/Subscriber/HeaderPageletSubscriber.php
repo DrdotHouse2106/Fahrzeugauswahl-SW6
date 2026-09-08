@@ -62,6 +62,21 @@ class HeaderPageletSubscriber implements EventSubscriberInterface
             $activeId = null;
         }
 
+        // Gekürzte Beschriftungen für die Kacheln (Präfix wie "Citroën" raus).
+        $stripPrefixes = $this->config->getStripPrefixes($salesChannelId);
+        $displayLabels = [];
+
+        if ($stripPrefixes !== []) {
+            foreach ($options as $option) {
+                $name = $option->getTranslation('name') ?? $option->getName() ?? '';
+                $short = $this->config->applyStripPrefixes($name, $stripPrefixes);
+
+                if ($short !== $name) {
+                    $displayLabels[$option->getId()] = $short;
+                }
+            }
+        }
+
         $event->getPagelet()->addExtension(
             'vehicleSwitcher',
             new VehicleSwitcherStruct(
@@ -71,7 +86,8 @@ class HeaderPageletSubscriber implements EventSubscriberInterface
                 $this->config->getAllOptionLabel($salesChannelId),
                 $this->config->getGroupLabels($salesChannelId),
                 $groupIds,
-                $this->config->getLayout($salesChannelId)
+                $this->config->getLayout($salesChannelId),
+                $displayLabels
             )
         );
     }

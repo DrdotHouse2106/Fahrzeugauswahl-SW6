@@ -89,6 +89,7 @@ Die **Beschriftungs- und Darstellungs-Einstellungen** kannst du zusätzlich pro 
 | **Anzeige** | `Alles in einem Balken` (Standard): eine Reihe, erst Gruppe 1, dann Gruppe 2. `Filtergruppen untereinander`: jede Gruppe in einer eigenen Zeile, „Alle"-Kachel in einer Zeile darüber. |
 | **Sortierung der Fahrzeuge** | Innerhalb einer Gruppe: `Manuelle Reihenfolge` (Standard) = Drag-&-Drop-Reihenfolge aus der Eigenschaftsgruppe. Alternativ `A–Z` / `Z–A`. |
 | **Maximale Anzahl Kacheln** | Obergrenze, falls eine Gruppe sehr viele Optionen hat. |
+| **Präfix in den Kacheln ausblenden** | Text, der am Anfang jeder Kachel-Beschriftung entfernt wird – z. B. `Citroën`, sodass aus „Citroën 2CV6" nur „2CV6" wird. **Nur die Anzeige** – die Eigenschaft selbst (Filter, SEO, Produktdetails) bleibt voll erhalten, der Tooltip zeigt weiter den kompletten Namen. Mehrere Präfixe mit Komma. Kombiniere es mit der Gruppen-Überschrift „Citroën" → `Citroën: [2CV6] [2CV4] …`. |
 | **„Alle"-Kachel anzeigen** | Kachel zum Aufheben des Filters. Aus = keine Reset-Kachel (Filter lässt sich weiter durch Klick auf die aktive Kachel aufheben). |
 | **Beschriftung der „Alle"-Kachel** | Freier Text, z. B. `Alle` oder `Zurücksetzen`. Leer = Standardtext. |
 

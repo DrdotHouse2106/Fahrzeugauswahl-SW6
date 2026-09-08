@@ -5,12 +5,12 @@
     <card>
         <title>Fahrzeug-Schnellauswahl</title>
 
-        <input-field type="bool">
-            <name>active</name>
-            <label>In diesem Verkaufskanal aktivieren</label>
-            <helpText>Nur wenn aktiviert, wird die Kachel-Leiste angezeigt UND der globale Kategoriefilter angewendet. Die Konfiguration ist pro Verkaufskanal möglich – oben den gewünschten Verkaufskanal auswählen.</helpText>
-            <defaultValue>false</defaultValue>
-        </input-field>
+        <component name="sw-entity-multi-id-select">
+            <name>activeSalesChannels</name>
+            <entity>sales_channel</entity>
+            <label>In diesen Verkaufskanälen aktiv</label>
+            <helpText>Kachel-Leiste UND globaler Kategoriefilter greifen nur in den hier gewählten Verkaufskanälen. Leer = überall inaktiv. Diese Liste am besten bei „Alle Verkaufskanäle“ (oben) pflegen.</helpText>
+        </component>
     </card>
 
     <card>

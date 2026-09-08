@@ -24,7 +24,13 @@ class VehicleSwitcherConfig
 
     public function isActive(?string $salesChannelId): bool
     {
-        return (bool) $this->systemConfigService->get(self::PREFIX . 'active', $salesChannelId);
+        if ($salesChannelId === null) {
+            return false;
+        }
+
+        $ids = $this->systemConfigService->get(self::PREFIX . 'activeSalesChannels', $salesChannelId);
+
+        return \is_array($ids) && \in_array($salesChannelId, $ids, true);
     }
 
     /**

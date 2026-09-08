@@ -14,7 +14,7 @@ angezeigt. Single-Select per Klick, global über alle Kategorien.
 | Anzeige | `HeaderPageletSubscriber` hängt die Optionen der Gruppen als Extension `vehicleSwitcher` an das Header-Pagelet. Twig rendert die Pill-Leiste unter dem Header. |
 | Auswahl | JS-Plugin `VehicleSwitcher`: Klick → genau ein Fahrzeug aktiv (kein Stacking). Klick auf das aktive Fahrzeug oder auf „Alle Fahrzeuge" → Auswahl aufgehoben. Wert landet in `localStorage` **und** per POST in der SalesChannel-Session. |
 | Globaler Filter | `ProductListingSubscriber` hört auf `ProductListingCriteriaEvent` / `ProductSearchCriteriaEvent` / `ProductSuggestCriteriaEvent` und fügt bei aktivem Fahrzeug `EqualsFilter('product.properties.id', <optionId>)` zum `Criteria` hinzu – für **jede** Kategorie / Suche. |
-| Multi-Shop | `config.xml` ist Sales-Channel-spezifisch. `active` steuert pro Verkaufskanal, ob Leiste **und** Filter greifen. |
+| Multi-Shop | Feld **„In diesen Verkaufskanälen aktiv"** – eine Mehrfachauswahl. Leiste **und** Filter greifen nur in den gewählten Kanälen. Kein Vererbungs-Gefummel pro Kanal. |
 
 ## Verzeichnisstruktur
 
@@ -67,12 +67,12 @@ bin/build-storefront.sh          # oder: bin/console theme:compile
 
 Einstellungen → System → Plugins → *Fahrzeug-Schnellauswahl* → *Konfiguration*
 
-1. **Oben den Verkaufskanal auswählen** (nicht „Alle Verkaufskanäle").
-2. „In diesem Verkaufskanal aktivieren" einschalten.
+1. Bei **„Alle Verkaufskanäle"** (oben) bleiben.
+2. Feld **„In diesen Verkaufskanälen aktiv"**: die Verkaufskanäle wählen, in denen die Schnellauswahl erscheinen soll. Leer = nirgends aktiv.
 3. Karte **Filtergruppen**: „Filtergruppe 1 – Eigenschaft" wählen, optional „Filtergruppe 2".
-4. Speichern. Für weitere Shops Schritt 1–3 wiederholen; nicht konfigurierte Kanäle bleiben unberührt.
+4. Speichern.
 
-Alle folgenden Einstellungen sind **pro Verkaufskanal** möglich.
+Die **Beschriftungs- und Darstellungs-Einstellungen** kannst du zusätzlich pro Verkaufskanal überschreiben (oben den Kanal wählen, am Feld die Vererbung lösen). Für Text- und Auswahlfelder funktioniert das problemlos.
 
 ### Filtergruppen
 

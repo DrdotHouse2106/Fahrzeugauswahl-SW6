@@ -14,7 +14,7 @@ Single select per click, applied globally across every category.
 | Rendering | `HeaderPageletSubscriber` attaches the group options as the `vehicleSwitcher` extension on the header pagelet. Twig renders the pill bar below the header. |
 | Selection | JS plugin `VehicleSwitcher`: a click activates exactly one vehicle (no stacking). Clicking the active vehicle or "All vehicles" clears the selection. The value is stored in `localStorage` **and** POSTed into the sales channel session. |
 | Global filter | `ProductListingSubscriber` listens on `ProductListingCriteriaEvent` / `ProductSearchCriteriaEvent` / `ProductSuggestCriteriaEvent` and, while a vehicle is active, adds `EqualsFilter('product.properties.id', <optionId>)` to the `Criteria` – for every category / search. |
-| Multi shop | `config.xml` is sales-channel specific. `active` controls per sales channel whether the bar **and** the filter apply. |
+| Multi shop | Field **"Active in these sales channels"** – a multi-select. Bar **and** filter apply only in the chosen channels. No per-channel inheritance fiddling. |
 
 ## Directory layout
 
@@ -67,12 +67,12 @@ bin/build-storefront.sh          # or: bin/console theme:compile
 
 Settings → System → Plugins → *Fahrzeug-Schnellauswahl* → *Config*
 
-1. **Pick the sales channel at the top** (not "All sales channels").
-2. Enable "Enable in this sales channel".
+1. Stay on **"All sales channels"** (top).
+2. Field **"Active in these sales channels"**: pick the sales channels where the switcher should appear. Empty = active nowhere.
 3. Card **Filter groups**: pick "Filter group 1 – property", optionally "Filter group 2".
-4. Save. Repeat steps 1–3 for further shops; sales channels left unconfigured stay untouched.
+4. Save.
 
-All settings below are configurable **per sales channel**.
+The **labelling and appearance settings** can additionally be overridden per sales channel (pick the channel at the top, unlink the field's inheritance). This works fine for text and select fields.
 
 ### Filter groups
 

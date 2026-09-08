@@ -7,91 +7,110 @@ import HttpClient from 'src/service/http-client.service';
  * - Single-Select per Klick (kein Stacking): ein Klick aktiviert genau ein Fahrzeug,
  *   ein Klick auf das aktive Fahrzeug (oder auf "Alle Fahrzeuge") hebt die Auswahl auf.
  * - Schreibt die optionId in LocalStorage (schnelle UI / Cross-Tab) und via POST in die Session.
- * - Nach dem Serverantwort-Callback wird die Seite neu geladen, damit der globale
+ * - Nach der Serverantwort wird die Seite neu geladen, damit der globale
  *   ProductListing-Filter greift.
+ *
+ * Die Klick-Behandlung läuft über EIN delegiertes Listener auf `document`.
+ * Grund: Themes (z. B. Eightwork Lumina) klonen oder re-rendern den Header
+ * für Sticky-/Transparent-Effekte. Direkt an die Kacheln gebundene Listener
+ * gehen dabei verloren – Delegation auf document überlebt das.
  */
+
+let globalClickBound = false;
+let busy = false;
+
 export default class VehicleSwitcherPlugin extends Plugin {
     static options = {
-        selectRoute: '',
+        selectRoute: '/vehicle-switcher/select',
         activeClass: 'is-active',
-        itemSelector: '[data-vehicle-switcher-item]',
         storageKey: 'vehicleSwitcherOptionId',
         loadingClass: 'vehicle-switcher--loading',
     };
 
     init() {
-        if (!this.options.selectRoute) {
+        this._client = new HttpClient();
+        this._syncLocalStorage();
+
+        if (!globalClickBound) {
+            document.addEventListener('click', VehicleSwitcherPlugin._onDocumentClick);
+            globalClickBound = true;
+        }
+    }
+
+    static _onDocumentClick(event) {
+        const item = event.target.closest('[data-vehicle-switcher-item]');
+        if (!item) {
             return;
         }
 
-        this._client = new HttpClient();
-        this._items = Array.from(this.el.querySelectorAll(this.options.itemSelector));
-        this._busy = false;
+        const container = item.closest('[data-vehicle-switcher]');
+        if (!container) {
+            return;
+        }
 
-        this._syncLocalStorage();
-        this._registerEvents();
-    }
-
-    _registerEvents() {
-        this._items.forEach((item) => {
-            item.addEventListener('click', this._onItemClick.bind(this));
-        });
-    }
-
-    _onItemClick(event) {
         event.preventDefault();
 
-        if (this._busy) {
+        if (busy) {
             return;
         }
 
-        const target = event.currentTarget;
-        const optionId = target.getAttribute('data-option-id') || '';
-        const isActive = target.classList.contains(this.options.activeClass);
-
-        // Klick auf bereits aktives Fahrzeug -> abwählen ("Show All").
+        const opts = VehicleSwitcherPlugin._readOptions(container);
+        const optionId = item.getAttribute('data-option-id') || '';
+        const isActive = item.classList.contains(opts.activeClass);
         const nextOptionId = isActive ? '' : optionId;
 
-        this._setActiveState(nextOptionId);
-        this._persist(nextOptionId);
-        this._submit(nextOptionId);
+        VehicleSwitcherPlugin._setActiveState(nextOptionId, opts.activeClass);
+        VehicleSwitcherPlugin._persist(nextOptionId, opts.storageKey);
+        VehicleSwitcherPlugin._submit(nextOptionId, opts);
     }
 
-    _submit(optionId) {
-        this._busy = true;
-        this.el.classList.add(this.options.loadingClass);
-        this.$emitter.publish('beforeChange', { optionId });
+    static _readOptions(container) {
+        const fallback = {
+            selectRoute: '/vehicle-switcher/select',
+            activeClass: 'is-active',
+            storageKey: 'vehicleSwitcherOptionId',
+        };
 
-        this._client.post(
-            this.options.selectRoute,
+        try {
+            const raw = container.getAttribute('data-vehicle-switcher-options');
+            return { ...fallback, ...(raw ? JSON.parse(raw) : {}) };
+        } catch (e) {
+            return fallback;
+        }
+    }
+
+    static _submit(optionId, opts) {
+        busy = true;
+
+        document.querySelectorAll('[data-vehicle-switcher]').forEach((el) => {
+            el.classList.add('vehicle-switcher--loading');
+        });
+
+        new HttpClient().post(
+            opts.selectRoute,
             JSON.stringify({ optionId }),
-            () => {
-                this.$emitter.publish('change', { optionId });
-                window.location.reload();
-            },
+            () => window.location.reload(),
         );
     }
 
     /**
-     * Setzt die active-Klasse rein visuell sofort (optimistic UI),
-     * bevor der Reload kommt.
+     * Setzt die active-Klasse sofort (optimistic UI) auf ALLEN im DOM
+     * vorhandenen Kopien der Leiste – z. B. Original + Sticky-Klon.
      */
-    _setActiveState(optionId) {
-        this._items.forEach((item) => {
-            const itemOption = item.getAttribute('data-option-id') || '';
-            const shouldBeActive = itemOption === optionId;
-
-            item.classList.toggle(this.options.activeClass, shouldBeActive);
+    static _setActiveState(optionId, activeClass) {
+        document.querySelectorAll('[data-vehicle-switcher-item]').forEach((item) => {
+            const shouldBeActive = (item.getAttribute('data-option-id') || '') === optionId;
+            item.classList.toggle(activeClass, shouldBeActive);
             item.setAttribute('aria-pressed', shouldBeActive ? 'true' : 'false');
         });
     }
 
-    _persist(optionId) {
+    static _persist(optionId, storageKey) {
         try {
             if (optionId) {
-                window.localStorage.setItem(this.options.storageKey, optionId);
+                window.localStorage.setItem(storageKey, optionId);
             } else {
-                window.localStorage.removeItem(this.options.storageKey);
+                window.localStorage.removeItem(storageKey);
             }
         } catch (e) {
             // Private mode / disabled storage -> Session reicht als Fallback.
@@ -111,13 +130,20 @@ export default class VehicleSwitcherPlugin extends Plugin {
             return;
         }
 
-        const domActive = this._items.find((item) => item.classList.contains(this.options.activeClass));
-        const domActiveId = domActive ? (domActive.getAttribute('data-option-id') || '') : '';
+        const items = Array.from(this.el.querySelectorAll('[data-vehicle-switcher-item]'));
+        if (items.length === 0) {
+            return;
+        }
 
-        // "" == "Alle Fahrzeuge" ist ein valider Zustand -> nur bei echtem Wert nachziehen.
-        if (stored && stored !== domActiveId && this._items.some((i) => i.getAttribute('data-option-id') === stored)) {
-            this._setActiveState(stored);
-            this._submit(stored);
+        const domActive = items.find((item) => item.classList.contains(this.options.activeClass));
+        const domActiveId = domActive ? (domActive.getAttribute('data-option-id') || '') : '';
+        const knownIds = items.map((item) => item.getAttribute('data-option-id') || '');
+
+        if (stored && stored !== domActiveId && knownIds.indexOf(stored) !== -1 && !busy) {
+            VehicleSwitcherPlugin._setActiveState(stored, this.options.activeClass);
+            VehicleSwitcherPlugin._submit(stored, {
+                selectRoute: this.options.selectRoute,
+            });
         }
     }
 }

@@ -2,9 +2,12 @@
 
 namespace Ulber\FahrzeugSchnellauswahl\Service;
 
+use Shopware\Core\Content\Product\SalesChannel\ProductAvailableFilter;
 use Shopware\Core\Content\Property\Aggregate\PropertyGroupOption\PropertyGroupOptionCollection;
 use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
+use Shopware\Core\Framework\DataAbstractionLayer\Search\Aggregation\Bucket\TermsAggregation;
+use Shopware\Core\Framework\DataAbstractionLayer\Search\AggregationResult\Bucket\TermsResult;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsAnyFilter;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Sorting\FieldSorting;
@@ -16,16 +19,26 @@ use Shopware\Core\Framework\DataAbstractionLayer\Search\Sorting\FieldSorting;
  */
 class VehicleOptionLoader
 {
-    public function __construct(private readonly EntityRepository $propertyGroupOptionRepository)
-    {
+    public function __construct(
+        private readonly EntityRepository $propertyGroupOptionRepository,
+        private readonly EntityRepository $productRepository
+    ) {
     }
 
     /**
-     * @param list<string>                 $groupIds Gruppen in gewünschter Anzeige-Reihenfolge
+     * @param list<string>                 $groupIds  Gruppen in gewünschter Anzeige-Reihenfolge
      * @param VehicleSwitcherConfig::SORT_* $sortMode
+     * @param list<string>                 $hiddenIds explizit ausgeblendete Options-IDs
+     * @param string|null                  $productSalesChannelId gesetzt => nur Optionen mit sichtbaren Produkten
      */
-    public function load(array $groupIds, int $limit, string $sortMode, Context $context): PropertyGroupOptionCollection
-    {
+    public function load(
+        array $groupIds,
+        int $limit,
+        string $sortMode,
+        array $hiddenIds,
+        ?string $productSalesChannelId,
+        Context $context
+    ): PropertyGroupOptionCollection {
         if ($groupIds === []) {
             return new PropertyGroupOptionCollection();
         }
@@ -35,7 +48,6 @@ class VehicleOptionLoader
         $criteria->setLimit(max($limit, 1));
         $criteria->setTitle('vehicle-switcher::options');
 
-        // Sortierung innerhalb einer Gruppe.
         match ($sortMode) {
             VehicleSwitcherConfig::SORT_NAME_ASC => $criteria->addSorting(
                 new FieldSorting('name', FieldSorting::ASCENDING)
@@ -43,8 +55,6 @@ class VehicleOptionLoader
             VehicleSwitcherConfig::SORT_NAME_DESC => $criteria->addSorting(
                 new FieldSorting('name', FieldSorting::DESCENDING)
             ),
-            // SORT_POSITION: manuelle Reihenfolge aus der Eigenschaftsgruppe,
-            // Name nur als Tie-Breaker bei gleicher Position.
             default => $criteria
                 ->addSorting(new FieldSorting('position', FieldSorting::ASCENDING))
                 ->addSorting(new FieldSorting('name', FieldSorting::ASCENDING)),
@@ -53,8 +63,7 @@ class VehicleOptionLoader
         /** @var PropertyGroupOptionCollection $found */
         $found = $this->propertyGroupOptionRepository->search($criteria, $context)->getEntities();
 
-        // Nach Gruppen-Reihenfolge umsortieren; die DAL-Sortierung bleibt
-        // innerhalb jeder Gruppe erhalten.
+        // Nach Gruppen-Reihenfolge umsortieren; DAL-Sortierung bleibt je Gruppe erhalten.
         $ordered = new PropertyGroupOptionCollection();
 
         foreach ($groupIds as $groupId) {
@@ -65,6 +74,64 @@ class VehicleOptionLoader
             }
         }
 
+        // Explizit ausgeblendete Optionen entfernen.
+        if ($hiddenIds !== []) {
+            $ordered = $ordered->filter(
+                static fn ($option): bool => !\in_array($option->getId(), $hiddenIds, true)
+            );
+        }
+
+        // Optional: nur Optionen behalten, denen ein sichtbares Produkt zugeordnet ist.
+        if ($productSalesChannelId !== null && $ordered->count() > 0) {
+            $usedIds = $this->findOptionIdsWithProducts(
+                array_values($ordered->getIds()),
+                $productSalesChannelId,
+                $context
+            );
+
+            $ordered = $ordered->filter(
+                static fn ($option): bool => \in_array($option->getId(), $usedIds, true)
+            );
+        }
+
         return $ordered;
+    }
+
+    /**
+     * @param list<string> $optionIds
+     *
+     * @return list<string>
+     */
+    private function findOptionIdsWithProducts(array $optionIds, string $salesChannelId, Context $context): array
+    {
+        if ($optionIds === []) {
+            return [];
+        }
+
+        $criteria = new Criteria();
+        $criteria->setLimit(1);
+        $criteria->setTitle('vehicle-switcher::used-options');
+        $criteria->addFilter(new EqualsAnyFilter('properties.id', $optionIds));
+        $criteria->addFilter(new ProductAvailableFilter($salesChannelId));
+        $criteria->addAggregation(
+            new TermsAggregation('vsw-props', 'properties.id', \count($optionIds) + 50)
+        );
+
+        $aggregation = $this->productRepository->aggregate($criteria, $context)->get('vsw-props');
+
+        if (!$aggregation instanceof TermsResult) {
+            // Aggregation nicht verfügbar -> im Zweifel nichts ausblenden.
+            return $optionIds;
+        }
+
+        $present = [];
+        foreach ($aggregation->getBuckets() as $bucket) {
+            $present[$bucket->getKey()] = true;
+        }
+
+        return array_values(array_filter(
+            $optionIds,
+            static fn (string $id): bool => isset($present[$id])
+        ));
     }
 }

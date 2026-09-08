@@ -14,6 +14,7 @@
 
         <service id="Ulber\FahrzeugSchnellauswahl\Service\VehicleOptionLoader">
             <argument type="service" id="property_group_option.repository"/>
+            <argument type="service" id="product.repository"/>
         </service>
 
         <service id="Ulber\FahrzeugSchnellauswahl\Subscriber\HeaderPageletSubscriber">

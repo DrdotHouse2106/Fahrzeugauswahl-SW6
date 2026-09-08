@@ -75,6 +75,13 @@ Einstellungen → System → Plugins → *Fahrzeug-Schnellauswahl* → *Konfigur
 
 Die **Beschriftungs- und Darstellungs-Einstellungen** kannst du zusätzlich pro Verkaufskanal überschreiben (oben den Kanal wählen, am Feld die Vererbung lösen). Für Text- und Auswahlfelder funktioniert das problemlos.
 
+### Ausblenden
+
+| Feld | Wirkung |
+|---|---|
+| **Einzelne Fahrzeuge ausblenden** | Mehrfachauswahl von Ausprägungen, die **nicht** in der Leiste erscheinen (z. B. noch nicht gepflegt). |
+| **Nur Fahrzeuge mit Produkten anzeigen** | Blendet automatisch alle Ausprägungen aus, denen im Verkaufskanal kein sichtbares Produkt zugeordnet ist. Kostet pro Seitenaufruf eine zusätzliche (indizierte) Abfrage – mit aktivem HTTP-Cache vernachlässigbar. |
+
 ### Filtergruppen
 
 | Feld | Wirkung |

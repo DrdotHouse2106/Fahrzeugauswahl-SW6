@@ -47,6 +47,8 @@ class HeaderPageletSubscriber implements EventSubscriberInterface
             $groupIds,
             $this->config->getMaxOptions($salesChannelId),
             $this->config->getSortMode($salesChannelId),
+            $this->config->getHiddenOptionIds($salesChannelId),
+            $this->config->onlyWithProducts($salesChannelId) ? $salesChannelId : null,
             $event->getContext()
         );
 

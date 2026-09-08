@@ -53,6 +53,27 @@ class VehicleSwitcherConfig
         return array_values(array_unique($ids));
     }
 
+    /**
+     * Explizit ausgeblendete Ausprägungen (property_group_option-IDs).
+     *
+     * @return list<string>
+     */
+    public function getHiddenOptionIds(?string $salesChannelId): array
+    {
+        $value = $this->systemConfigService->get(self::PREFIX . 'hiddenOptionIds', $salesChannelId);
+
+        if (!\is_array($value)) {
+            return [];
+        }
+
+        return array_values(array_filter($value, static fn ($id): bool => \is_string($id) && $id !== ''));
+    }
+
+    public function onlyWithProducts(?string $salesChannelId): bool
+    {
+        return (bool) $this->systemConfigService->get(self::PREFIX . 'onlyWithProducts', $salesChannelId);
+    }
+
     public function getMaxOptions(?string $salesChannelId): int
     {
         $value = (int) $this->systemConfigService->get(self::PREFIX . 'maxOptions', $salesChannelId);

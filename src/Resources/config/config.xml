@@ -43,6 +43,24 @@
     </card>
 
     <card>
+        <title>Ausblenden</title>
+
+        <component name="sw-entity-multi-id-select">
+            <name>hiddenOptionIds</name>
+            <entity>property_group_option</entity>
+            <label>Einzelne Fahrzeuge ausblenden</label>
+            <helpText>Diese Ausprägungen erscheinen NICHT in der Leiste (z. B. weil noch nicht gepflegt). Der Filter selbst bleibt möglich, nur die Kachel fehlt.</helpText>
+        </component>
+
+        <input-field type="bool">
+            <name>onlyWithProducts</name>
+            <label>Nur Fahrzeuge mit Produkten anzeigen</label>
+            <helpText>Blendet automatisch alle Ausprägungen aus, denen (im aktuellen Verkaufskanal) kein sichtbares Produkt zugeordnet ist. Kostet pro Seitenaufruf eine zusätzliche Abfrage.</helpText>
+            <defaultValue>false</defaultValue>
+        </input-field>
+    </card>
+
+    <card>
         <title>Darstellung</title>
 
         <input-field type="single-select">

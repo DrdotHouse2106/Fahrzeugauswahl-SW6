@@ -1,0 +1,52 @@
+<?php declare(strict_types=1);
+
+namespace Ulber\FahrzeugSchnellauswahl\Subscriber;
+
+use Shopware\Core\Content\Product\Events\ProductListingRouteCacheKeyEvent;
+use Shopware\Core\Content\Product\Events\ProductSearchRouteCacheKeyEvent;
+use Shopware\Core\Content\Product\Events\ProductSuggestRouteCacheKeyEvent;
+use Shopware\Core\Framework\Adapter\Cache\Event\HttpCacheKeyEvent;
+use Shopware\Core\Framework\Adapter\Cache\StoreApiRouteCacheKeyEvent;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Ulber\FahrzeugSchnellauswahl\Service\VehicleSelectionStorage;
+
+/**
+ * Nimmt die gewählte Fahrzeug-OptionId in den HTTP-Cache-Key auf, damit
+ * gecachte Kategorie-/Suchseiten pro Fahrzeug unterschieden werden.
+ * Ohne das würde bei aktivem HTTP-Cache immer die "ungefilterte" Seite
+ * ausgeliefert.
+ */
+class CacheKeySubscriber implements EventSubscriberInterface
+{
+    public function __construct(private readonly VehicleSelectionStorage $selectionStorage)
+    {
+    }
+
+    public static function getSubscribedEvents(): array
+    {
+        return [
+            HttpCacheKeyEvent::class => 'onHttpCacheKey',
+            ProductListingRouteCacheKeyEvent::class => 'onRouteCacheKey',
+            ProductSearchRouteCacheKeyEvent::class => 'onRouteCacheKey',
+            ProductSuggestRouteCacheKeyEvent::class => 'onRouteCacheKey',
+        ];
+    }
+
+    public function onHttpCacheKey(HttpCacheKeyEvent $event): void
+    {
+        $optionId = $event->request->cookies->get(VehicleSelectionStorage::COOKIE_NAME);
+
+        if (\is_string($optionId) && $optionId !== '') {
+            $event->add('vehicle-switcher', $optionId);
+        }
+    }
+
+    public function onRouteCacheKey(StoreApiRouteCacheKeyEvent $event): void
+    {
+        $optionId = $event->getRequest()->cookies->get(VehicleSelectionStorage::COOKIE_NAME);
+
+        if (\is_string($optionId) && $optionId !== '') {
+            $event->addPart('vehicle-switcher-' . $optionId);
+        }
+    }
+}

@@ -3,15 +3,17 @@
 namespace Ulber\FahrzeugSchnellauswahl\Service;
 
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 /**
- * Persistiert die aktuell gewählte Fahrzeug-OptionId in der SalesChannel-Session.
- * Es gibt bewusst nur EINEN Wert (Single-Select).
+ * Liest die aktuell gewählte Fahrzeug-OptionId aus dem Cookie.
+ *
+ * Bewusst ein Cookie (nicht die Session): Der Wert muss schon beim Aufbau des
+ * HTTP-Cache-Keys verfügbar sein – die Session ist zu dem Zeitpunkt nicht
+ * zuverlässig gestartet. Gesetzt wird das Cookie clientseitig im Storefront-JS.
  */
 class VehicleSelectionStorage
 {
-    public const SESSION_KEY = 'vehicleSwitcherOptionId';
+    public const COOKIE_NAME = 'vehicle-switcher-option';
 
     public function __construct(private readonly RequestStack $requestStack)
     {
@@ -19,42 +21,14 @@ class VehicleSelectionStorage
 
     public function get(): ?string
     {
-        $session = $this->getSession();
+        $request = $this->requestStack->getMainRequest() ?? $this->requestStack->getCurrentRequest();
 
-        if (!$session instanceof SessionInterface) {
+        if ($request === null) {
             return null;
         }
 
-        $value = $session->get(self::SESSION_KEY);
+        $value = $request->cookies->get(self::COOKIE_NAME);
 
         return \is_string($value) && $value !== '' ? $value : null;
-    }
-
-    public function set(?string $optionId): void
-    {
-        $session = $this->getSession();
-
-        if (!$session instanceof SessionInterface) {
-            return;
-        }
-
-        if ($optionId === null || $optionId === '') {
-            $session->remove(self::SESSION_KEY);
-
-            return;
-        }
-
-        $session->set(self::SESSION_KEY, $optionId);
-    }
-
-    private function getSession(): ?SessionInterface
-    {
-        $request = $this->requestStack->getMainRequest();
-
-        if ($request === null || !$request->hasSession()) {
-            return null;
-        }
-
-        return $request->getSession();
     }
 }

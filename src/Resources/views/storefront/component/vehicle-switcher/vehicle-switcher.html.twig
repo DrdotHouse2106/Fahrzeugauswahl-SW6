@@ -29,12 +29,7 @@
 {% block component_vehicle_switcher %}
     {% set layout = layout|default('bar') %}
     <div class="vehicle-switcher vehicle-switcher--{{ layout }}"
-         data-vehicle-switcher="true"
-         data-vehicle-switcher-options="{{ {
-             selectRoute: path('frontend.vehicle-switcher.select'),
-             activeClass: 'is-active',
-             storageKey: 'vehicleSwitcherOptionId'
-         }|json_encode }}">
+         data-vehicle-switcher="true">
 
         {% block component_vehicle_switcher_inner %}
 

@@ -12,8 +12,9 @@ angezeigt. Single-Select per Klick, global über alle Kategorien.
 |--------|--------------|
 | Datenbasis | Ganz normale Shopware-**Eigenschaften** (Properties). Im Admin werden eine oder zwei „Filtergruppen" (= je eine Eigenschaftsgruppe) ausgewählt. Wie diese befüllt werden – manuell, per Import oder aus einem ERP – ist dem Plugin egal. |
 | Anzeige | `HeaderPageletSubscriber` hängt die Optionen der Gruppen als Extension `vehicleSwitcher` an das Header-Pagelet. Twig rendert die Pill-Leiste unter dem Header. |
-| Auswahl | JS-Plugin `VehicleSwitcher`: Klick → genau ein Fahrzeug aktiv (kein Stacking). Klick auf das aktive Fahrzeug oder auf „Alle Fahrzeuge" → Auswahl aufgehoben. Wert landet in `localStorage` **und** per POST in der SalesChannel-Session. |
-| Globaler Filter | `ProductListingSubscriber` hört auf `ProductListingCriteriaEvent` / `ProductSearchCriteriaEvent` / `ProductSuggestCriteriaEvent` und fügt bei aktivem Fahrzeug `EqualsFilter('product.properties.id', <optionId>)` zum `Criteria` hinzu – für **jede** Kategorie / Suche. |
+| Auswahl | JS-Plugin `VehicleSwitcher`: Klick → genau ein Fahrzeug aktiv (kein Stacking). Klick auf das aktive Fahrzeug oder auf „Alle Fahrzeuge" → Auswahl aufgehoben. Der Wert wird in ein **Cookie** (`vehicle-switcher-option`) geschrieben und in `localStorage` gespiegelt, dann ein Reload. Kein AJAX/Route – das Cookie ist beim nächsten Request sofort da. |
+| Globaler Filter | `ProductListingSubscriber` hört auf `ProductListingCriteriaEvent` / `ProductSearchCriteriaEvent` / `ProductSuggestCriteriaEvent`, liest das Cookie und fügt bei aktivem Fahrzeug `EqualsFilter('product.properties.id', <optionId>)` zum `Criteria` hinzu – für **jede** Kategorie / Suche. |
+| HTTP-Cache | `CacheKeySubscriber` nimmt die OptionId in den HTTP-Cache-Key auf (`HttpCacheKeyEvent` + `Product*RouteCacheKeyEvent`), damit gecachte Kategorie-/Suchseiten pro Fahrzeug unterschieden werden. |
 | Multi-Shop | Feld **„In diesen Verkaufskanälen aktiv"** – eine Mehrfachauswahl. Leiste **und** Filter greifen nur in den gewählten Kanälen. Kein Vererbungs-Gefummel pro Kanal. |
 
 ## Verzeichnisstruktur
@@ -23,32 +24,32 @@ angezeigt. Single-Select per Klick, global über alle Kategorien.
 ├── composer.json
 └── src/
     ├── FahrzeugSchnellauswahl.php
-    ├── Controller/
-    │   └── VehicleSwitcherController.php        # POST /vehicle-switcher/select
     ├── Subscriber/
     │   ├── HeaderPageletSubscriber.php          # Optionen -> Template
-    │   └── ProductListingSubscriber.php         # globaler Criteria-Filter
+    │   ├── ProductListingSubscriber.php         # globaler Criteria-Filter
+    │   └── CacheKeySubscriber.php               # OptionId -> HTTP-Cache-Key
     ├── Service/
     │   ├── VehicleSwitcherConfig.php            # SystemConfig (pro SalesChannel)
-    │   ├── VehicleSelectionStorage.php          # Session (Single-Select)
+    │   ├── VehicleSelectionStorage.php          # Cookie lesen (Single-Select)
     │   └── VehicleOptionLoader.php              # property_group_option laden
     ├── Struct/
     │   └── VehicleSwitcherStruct.php
     └── Resources/
         ├── config/
         │   ├── config.xml                       # Admin-Konfiguration
-        │   ├── services.xml
-        │   └── routes.php
+        │   └── services.xml
         ├── snippet/
         │   ├── de_DE/messages.de-DE.json
         │   └── en_GB/messages.en-GB.json        # nur technischer Fallback
         ├── views/storefront/
         │   ├── layout/header/header.html.twig
         │   └── component/vehicle-switcher/vehicle-switcher.html.twig
-        └── app/storefront/src/
-            ├── main.js
-            ├── plugin/vehicle-switcher/vehicle-switcher.plugin.js
-            └── scss/base.scss
+        └── app/storefront/
+            ├── src/
+            │   ├── main.js
+            │   ├── plugin/vehicle-switcher/vehicle-switcher.plugin.js
+            │   └── scss/base.scss
+            └── dist/…/fahrzeug-schnellauswahl.js   # kompiliert, mitgeliefert
 ```
 
 ## Installation
@@ -108,7 +109,11 @@ automatisch als Kacheln.
 
 ## Hinweise
 
-- Der Filter greift serverseitig über die Session → nach einem Klick lädt die Seite einmal neu.
-- Es ist immer **genau ein** Fahrzeug aktiv oder keins (`""` = „Alle Fahrzeuge").
-- Ist die in der Session gespeicherte Option in den aktuell konfigurierten Gruppen nicht
+- Der Filter greift serverseitig über das Cookie → nach einem Klick lädt die Seite einmal neu.
+- Es ist immer **genau ein** Fahrzeug aktiv oder keins (kein Cookie = „Alle Fahrzeuge").
+- Ist die im Cookie gespeicherte Option in den aktuell konfigurierten Gruppen nicht
   (mehr) vorhanden, wird sie ignoriert, damit der Kunde nicht in einem leeren Filter feststeckt.
+- Das kompilierte Storefront-JS (`dist/`) ist **im Plugin enthalten** – auf Produktivsystemen
+  reicht `bin/console theme:compile`, kein `bin/build-storefront.sh` / Node nötig.
+- Damit die Kachel-Leiste unter einem **eigenen Theme** erscheint, muss dessen `theme.json`
+  in `style` **und** `script` den Eintrag `@Plugins` enthalten.

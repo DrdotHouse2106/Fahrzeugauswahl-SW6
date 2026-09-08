@@ -29,11 +29,9 @@
             <tag name="kernel.event_subscriber"/>
         </service>
 
-        <service id="Ulber\FahrzeugSchnellauswahl\Controller\VehicleSwitcherController" public="true">
+        <service id="Ulber\FahrzeugSchnellauswahl\Subscriber\CacheKeySubscriber">
             <argument type="service" id="Ulber\FahrzeugSchnellauswahl\Service\VehicleSelectionStorage"/>
-            <call method="setContainer">
-                <argument type="service" id="service_container"/>
-            </call>
+            <tag name="kernel.event_subscriber"/>
         </service>
     </services>
 </container>

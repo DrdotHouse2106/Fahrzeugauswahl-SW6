@@ -24,8 +24,14 @@ class VehicleSwitcherStruct extends Struct
         protected array $groupLabels = [],
         protected array $groupOrder = [],
         protected string $layout = 'bar',
-        protected array $displayLabels = []
+        protected array $displayLabels = [],
+        protected ?string $activeDescription = null
     ) {
+    }
+
+    public function getActiveDescription(): ?string
+    {
+        return $this->activeDescription;
     }
 
     public function getOptions(): PropertyGroupOptionCollection

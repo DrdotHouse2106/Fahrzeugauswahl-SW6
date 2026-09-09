@@ -105,6 +105,13 @@ class VehicleSwitcherConfig
         return $value === null ? true : (bool) $value;
     }
 
+    public function showActiveDescription(?string $salesChannelId): bool
+    {
+        $value = $this->systemConfigService->get(self::PREFIX . 'showActiveDescription', $salesChannelId);
+
+        return $value === null ? true : (bool) $value;
+    }
+
     /**
      * Eigene Beschriftung der „Alle"-Kachel. Null = Standardtext (Snippet).
      */

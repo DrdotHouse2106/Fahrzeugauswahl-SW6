@@ -93,5 +93,15 @@
             {% endif %}
 
         {% endblock %}
+
+        {% block component_vehicle_switcher_description %}
+            {% if activeDescription is not empty %}
+                <div class="vehicle-switcher__description">
+                    {% block component_vehicle_switcher_description_inner %}
+                        {{ activeDescription|raw }}
+                    {% endblock %}
+                </div>
+            {% endif %}
+        {% endblock %}
     </div>
 {% endblock %}

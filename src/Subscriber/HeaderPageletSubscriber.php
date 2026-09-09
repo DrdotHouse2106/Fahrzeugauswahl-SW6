@@ -4,6 +4,7 @@ namespace Ulber\FahrzeugSchnellauswahl\Subscriber;
 
 use Shopware\Storefront\Pagelet\Header\HeaderPageletLoadedEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Ulber\FahrzeugSchnellauswahl\Migration\Migration1788960000CreateVehicleDescriptionField;
 use Ulber\FahrzeugSchnellauswahl\Service\VehicleOptionLoader;
 use Ulber\FahrzeugSchnellauswahl\Service\VehicleSelectionStorage;
 use Ulber\FahrzeugSchnellauswahl\Service\VehicleSwitcherConfig;
@@ -79,6 +80,21 @@ class HeaderPageletSubscriber implements EventSubscriberInterface
             }
         }
 
+        // Beschreibung/Spezifikation des aktiven Fahrzeugs (Custom-Field).
+        $activeDescription = null;
+
+        if ($activeId !== null && $this->config->showActiveDescription($salesChannelId)) {
+            $activeOption = $options->get($activeId);
+            $customFields = $activeOption?->getTranslation('customFields') ?? $activeOption?->getCustomFields();
+            $value = \is_array($customFields)
+                ? ($customFields[Migration1788960000CreateVehicleDescriptionField::CUSTOM_FIELD_NAME] ?? null)
+                : null;
+
+            if (\is_string($value) && trim(strip_tags($value)) !== '') {
+                $activeDescription = $value;
+            }
+        }
+
         $event->getPagelet()->addExtension(
             'vehicleSwitcher',
             new VehicleSwitcherStruct(
@@ -89,7 +105,8 @@ class HeaderPageletSubscriber implements EventSubscriberInterface
                 $this->config->getGroupLabels($salesChannelId),
                 $groupIds,
                 $this->config->getLayout($salesChannelId),
-                $displayLabels
+                $displayLabels,
+                $activeDescription
             )
         );
     }

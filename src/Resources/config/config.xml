@@ -120,6 +120,13 @@
             <defaultValue>true</defaultValue>
         </input-field>
 
+        <input-field type="bool">
+            <name>showActiveDescription</name>
+            <label>Fahrzeug-Beschreibung anzeigen</label>
+            <helpText>Zeigt unter der Leiste einen Text-Block mit der Spezifikation des aktiven Fahrzeugs. Der Text wird pro Ausprägung im Custom-Field „Fahrzeug-Beschreibung“ gepflegt (Kataloge → Eigenschaften → Ausprägung → Reiter Zusatzfelder) oder per ERP-Sync befüllt.</helpText>
+            <defaultValue>true</defaultValue>
+        </input-field>
+
         <input-field type="text">
             <name>allOptionLabel</name>
             <label>Beschriftung der „Alle“-Kachel</label>

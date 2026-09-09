@@ -1,0 +1,25 @@
+{% sw_extends '@Storefront/storefront/layout/footer/footer.html.twig' %}
+
+{#
+    Fahrzeug-Beschreibung am Seitenende (Position "unten").
+    Extension wird im FooterPageletSubscriber gesetzt.
+#}
+{% block layout_footer_inner_container %}
+    {% set vswDesc = footer.extensions.vehicleSwitcherDescription ?? null %}
+
+    {% if vswDesc %}
+        {% set vswRoute = activeRoute|default(app.request.attributes.get('_route')) %}
+        {% set vswAllowed = not vswDesc.get('listingOnly')
+            or vswRoute in ['frontend.navigation.page', 'frontend.search.page', 'frontend.home.page'] %}
+
+        {% if vswAllowed %}
+            {% block component_vehicle_switcher_description_footer %}
+                <div class="vehicle-switcher__description vehicle-switcher__description--footer">
+                    {{ vswDesc.get('html')|raw }}
+                </div>
+            {% endblock %}
+        {% endif %}
+    {% endif %}
+
+    {{ parent() }}
+{% endblock %}

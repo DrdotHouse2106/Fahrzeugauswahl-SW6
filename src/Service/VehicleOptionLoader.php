@@ -4,6 +4,8 @@ namespace Ulber\FahrzeugSchnellauswahl\Service;
 
 use Shopware\Core\Content\Product\SalesChannel\ProductAvailableFilter;
 use Shopware\Core\Content\Property\Aggregate\PropertyGroupOption\PropertyGroupOptionCollection;
+use Shopware\Core\Content\Property\Aggregate\PropertyGroupOption\PropertyGroupOptionEntity;
+use Ulber\FahrzeugSchnellauswahl\Migration\Migration1788960000CreateVehicleDescriptionField;
 use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Aggregation\Bucket\TermsAggregation;
@@ -95,6 +97,24 @@ class VehicleOptionLoader
         }
 
         return $ordered;
+    }
+
+    /**
+     * HTML-Beschreibung (Custom-Field) einer Ausprägung – oder null.
+     */
+    public function extractDescription(PropertyGroupOptionEntity $option): ?string
+    {
+        $customFields = $option->getTranslation('customFields') ?? $option->getCustomFields();
+
+        $value = \is_array($customFields)
+            ? ($customFields[Migration1788960000CreateVehicleDescriptionField::CUSTOM_FIELD_NAME] ?? null)
+            : null;
+
+        if (\is_string($value) && trim(strip_tags($value)) !== '') {
+            return $value;
+        }
+
+        return null;
     }
 
     /**

@@ -24,6 +24,13 @@
             <tag name="kernel.event_subscriber"/>
         </service>
 
+        <service id="Ulber\FahrzeugSchnellauswahl\Subscriber\FooterPageletSubscriber">
+            <argument type="service" id="Ulber\FahrzeugSchnellauswahl\Service\VehicleSwitcherConfig"/>
+            <argument type="service" id="Ulber\FahrzeugSchnellauswahl\Service\VehicleOptionLoader"/>
+            <argument type="service" id="Ulber\FahrzeugSchnellauswahl\Service\VehicleSelectionStorage"/>
+            <tag name="kernel.event_subscriber"/>
+        </service>
+
         <service id="Ulber\FahrzeugSchnellauswahl\Subscriber\ProductListingSubscriber">
             <argument type="service" id="Ulber\FahrzeugSchnellauswahl\Service\VehicleSwitcherConfig"/>
             <argument type="service" id="Ulber\FahrzeugSchnellauswahl\Service\VehicleSelectionStorage"/>

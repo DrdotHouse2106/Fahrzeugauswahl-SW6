@@ -4,7 +4,6 @@ namespace Ulber\FahrzeugSchnellauswahl\Subscriber;
 
 use Shopware\Storefront\Pagelet\Header\HeaderPageletLoadedEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Ulber\FahrzeugSchnellauswahl\Migration\Migration1788960000CreateVehicleDescriptionField;
 use Ulber\FahrzeugSchnellauswahl\Service\VehicleOptionLoader;
 use Ulber\FahrzeugSchnellauswahl\Service\VehicleSelectionStorage;
 use Ulber\FahrzeugSchnellauswahl\Service\VehicleSwitcherConfig;
@@ -80,19 +79,18 @@ class HeaderPageletSubscriber implements EventSubscriberInterface
             }
         }
 
-        // Beschreibung/Spezifikation des aktiven Fahrzeugs (Custom-Field).
+        // Beschreibung/Spezifikation des aktiven Fahrzeugs (Custom-Field) – nur bei Position "oben".
         $activeDescription = null;
 
-        if ($activeId !== null && $this->config->showActiveDescription($salesChannelId)) {
+        if (
+            $activeId !== null
+            && $this->config->showActiveDescription($salesChannelId)
+            && $this->config->getDescriptionPosition($salesChannelId) === 'top'
+        ) {
             $activeOption = $options->get($activeId);
-            $customFields = $activeOption?->getTranslation('customFields') ?? $activeOption?->getCustomFields();
-            $value = \is_array($customFields)
-                ? ($customFields[Migration1788960000CreateVehicleDescriptionField::CUSTOM_FIELD_NAME] ?? null)
+            $activeDescription = $activeOption !== null
+                ? $this->optionLoader->extractDescription($activeOption)
                 : null;
-
-            if (\is_string($value) && trim(strip_tags($value)) !== '') {
-                $activeDescription = $value;
-            }
         }
 
         $event->getPagelet()->addExtension(
@@ -106,7 +104,8 @@ class HeaderPageletSubscriber implements EventSubscriberInterface
                 $groupIds,
                 $this->config->getLayout($salesChannelId),
                 $displayLabels,
-                $activeDescription
+                $activeDescription,
+                $this->config->descriptionListingOnly($salesChannelId)
             )
         );
     }

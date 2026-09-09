@@ -100,7 +100,9 @@ Die **Beschriftungs- und Darstellungs-Einstellungen** kannst du zusätzlich pro 
 | **Maximale Anzahl Kacheln** | Obergrenze, falls eine Gruppe sehr viele Optionen hat. |
 | **Präfix in den Kacheln ausblenden** | Text, der am Anfang jeder Kachel-Beschriftung entfernt wird – z. B. `Citroën`, sodass aus „Citroën 2CV6" nur „2CV6" wird. **Nur die Anzeige** – die Eigenschaft selbst (Filter, SEO, Produktdetails) bleibt voll erhalten, der Tooltip zeigt weiter den kompletten Namen. Mehrere Präfixe mit Komma. Kombiniere es mit der Gruppen-Überschrift „Citroën" → `Citroën: [2CV6] [2CV4] …`. |
 | **„Alle"-Kachel anzeigen** | Kachel zum Aufheben des Filters. Aus = keine Reset-Kachel (Filter lässt sich weiter durch Klick auf die aktive Kachel aufheben). |
-| **Fahrzeug-Beschreibung anzeigen** | Zeigt unter der Leiste einen HTML-Block mit der Spezifikation des aktiven Fahrzeugs (Hubraum, Baujahre, Modellvarianten …). Gepflegt wird der Text **pro Ausprägung** im Custom-Field *„Fahrzeug-Beschreibung"* (Kataloge → Eigenschaften → Ausprägung öffnen → Reiter *Zusatzfelder*) – oder per ERP-Sync auf das Feld `vehicle_switcher_description`. |
+| **Fahrzeug-Beschreibung anzeigen** | Zeigt einen HTML-Block mit der Spezifikation des aktiven Fahrzeugs (Hubraum, Baujahre, Modellvarianten …). Gepflegt wird der Text **pro Ausprägung** im Custom-Field *„Fahrzeug-Beschreibung"* (Kataloge → Eigenschaften → Ausprägung öffnen → Reiter *Zusatzfelder*) – oder per ERP-Sync auf das Feld `vehicle_switcher_description`. |
+| **Position der Fahrzeug-Beschreibung** | `Oben` (direkt unter der Kachel-Leiste) oder `Unten` (Seitenende über dem Footer – klassischer SEO-Text-Platz, stört die Produktliste nicht). |
+| **Nur auf Kategorie-/Suchseiten** | Empfohlen (Default an): der Text erscheint dann nicht auf jeder Produkt-/Inhaltsseite → weniger doppelter Boilerplate-Content. |
 | **Beschriftung der „Alle"-Kachel** | Freier Text, z. B. `Alle` oder `Zurücksetzen`. Leer = Standardtext. |
 
 Die sichtbaren Kacheltexte selbst sind die **Namen der Eigenschafts-Optionen** – die änderst du direkt in Shopware unter *Kataloge → Eigenschaften* (bzw. mehrsprachig je Übersetzung).

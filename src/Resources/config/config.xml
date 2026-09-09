@@ -123,7 +123,31 @@
         <input-field type="bool">
             <name>showActiveDescription</name>
             <label>Fahrzeug-Beschreibung anzeigen</label>
-            <helpText>Zeigt unter der Leiste einen Text-Block mit der Spezifikation des aktiven Fahrzeugs. Der Text wird pro Ausprägung im Custom-Field „Fahrzeug-Beschreibung“ gepflegt (Kataloge → Eigenschaften → Ausprägung → Reiter Zusatzfelder) oder per ERP-Sync befüllt.</helpText>
+            <helpText>Zeigt einen Text-Block mit der Spezifikation des aktiven Fahrzeugs. Der Text wird pro Ausprägung im Custom-Field „Fahrzeug-Beschreibung“ gepflegt (Kataloge → Eigenschaften → Ausprägung → Reiter Zusatzfelder) oder per ERP-Sync befüllt.</helpText>
+            <defaultValue>true</defaultValue>
+        </input-field>
+
+        <input-field type="single-select">
+            <name>descriptionPosition</name>
+            <label>Position der Fahrzeug-Beschreibung</label>
+            <options>
+                <option>
+                    <id>top</id>
+                    <name>Oben – direkt unter der Kachel-Leiste</name>
+                </option>
+                <option>
+                    <id>bottom</id>
+                    <name>Unten – am Seitenende über dem Footer</name>
+                </option>
+            </options>
+            <defaultValue>top</defaultValue>
+            <helpText>„Unten“ ist der klassische SEO-Text-Platz (stört die Produktliste nicht). „Oben“ ist prominenter, drückt aber die Produkte nach unten.</helpText>
+        </input-field>
+
+        <input-field type="bool">
+            <name>descriptionListingOnly</name>
+            <label>Fahrzeug-Beschreibung nur auf Kategorie-/Suchseiten</label>
+            <helpText>Empfohlen: dann erscheint der Text nicht auf jeder Produkt-/Inhaltsseite (weniger doppelter Boilerplate-Content).</helpText>
             <defaultValue>true</defaultValue>
         </input-field>
 

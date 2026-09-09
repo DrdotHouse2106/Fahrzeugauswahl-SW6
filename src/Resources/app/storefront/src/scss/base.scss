@@ -79,6 +79,15 @@ $vs-pill-active-color: var(--vs-pill-active-color, #ffffff) !default;
         @media (max-width: 767px) {
             padding: 10px 12px 14px;
         }
+
+        &--footer {
+            border-top: none;
+            border-bottom: 1px solid $vs-bar-border;
+            padding-top: 20px;
+            padding-bottom: 20px;
+            color: var(--vs-desc-footer-color, #6b6b6b);
+            font-size: 13px;
+        }
     }
 
     // Layout "stacked": jede Filtergruppe in einer eigenen Zeile

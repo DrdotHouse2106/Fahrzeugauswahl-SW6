@@ -113,6 +113,28 @@ class VehicleSwitcherConfig
     }
 
     /**
+     * @return 'top'|'bottom'
+     */
+    public function getDescriptionPosition(?string $salesChannelId): string
+    {
+        return $this->systemConfigService->get(self::PREFIX . 'descriptionPosition', $salesChannelId) === 'bottom'
+            ? 'bottom'
+            : 'top';
+    }
+
+    /**
+     * Beschreibung nur auf Kategorie-/Such-/Startseite anzeigen?
+     * (Die Routen-Prüfung selbst passiert im Template – im Pagelet ist die
+     * echte Seiten-Route nicht verfügbar.)
+     */
+    public function descriptionListingOnly(?string $salesChannelId): bool
+    {
+        $value = $this->systemConfigService->get(self::PREFIX . 'descriptionListingOnly', $salesChannelId);
+
+        return $value === null ? true : (bool) $value;
+    }
+
+    /**
      * Eigene Beschriftung der „Alle"-Kachel. Null = Standardtext (Snippet).
      */
     public function getAllOptionLabel(?string $salesChannelId): ?string

@@ -95,7 +95,12 @@
         {% endblock %}
 
         {% block component_vehicle_switcher_description %}
-            {% if activeDescription is not empty %}
+            {% set vswRoute = activeRoute|default(app.request.attributes.get('_route')) %}
+            {% set vswDescAllowed = descriptionListingOnly is not defined
+                or not descriptionListingOnly
+                or vswRoute in ['frontend.navigation.page', 'frontend.search.page', 'frontend.home.page'] %}
+
+            {% if activeDescription is not empty and vswDescAllowed %}
                 <div class="vehicle-switcher__description">
                     {% block component_vehicle_switcher_description_inner %}
                         {{ activeDescription|raw }}
